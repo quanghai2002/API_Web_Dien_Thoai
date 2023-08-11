@@ -3,7 +3,6 @@ import isEmail from "validator/lib/isemail.js";
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-
 const User = mongoose.model('User',
     new Schema({
         id: ObjectId,
@@ -20,6 +19,7 @@ const User = mongoose.model('User',
         email: {
             type: String,
             required: true,
+            unique: true,
             validate: {
                 validator: (value) => {
                     return isEmail
@@ -41,6 +41,10 @@ const User = mongoose.model('User',
             type: String,
             required: true,
 
+        },
+        admin: {
+            type: Boolean,
+            default: false,
         },
         createdAt: {
             type: Date,
