@@ -35,10 +35,32 @@ const getAllStudents = async ({ page, size, searchString }) => {
         { $limit: size },
 
 
-    ])
-    return filterStudent;
+    ]);
+    let count = await Student.count();
+
+    return { filterStudent, count }
 
 }
+
+// sortStudent
+const sortStudent = async ({ page, size }) => {
+    // aggreate data for all . get data students
+    size = Number.parseInt(size);
+    page = Number.parseInt(page);
+
+    // Find First 10 News Items
+    let sortStudent = await Student.find()
+        .sort({ name: 1 })
+        .skip((page - 1) * size)
+        .limit(size);
+
+    let count = await Student.count();
+
+    return { sortStudent, count }
+
+
+}
+
 
 
 // get student buy ID
@@ -133,4 +155,4 @@ async function generateFakeStudent() {
 
 
 
-export default { getAllStudents, insertStudents, generateFakeStudent, getStudentBuyID, updateStudent, deleteStudent }
+export default { getAllStudents, insertStudents, generateFakeStudent, getStudentBuyID, updateStudent, deleteStudent, sortStudent }

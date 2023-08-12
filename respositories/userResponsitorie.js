@@ -160,8 +160,9 @@ const getAllUser = async ({ page, size, searchString }) => {
         // limit user/ pagination
         { $limit: size },
 
-    ])
-    return filterUser;
+    ]);
+    let count = await User.count();
+    return { filterUser, count };
 }
 
 // delete one user

@@ -110,10 +110,12 @@ const getAllUser = async (req, res) => {
 
         res.status(200).json({
             message: 'GET ALL user successfully ',
-            size: filterUser.length,
+            size: filterUser.filterUser.length,
             page,
+            pages: Math.ceil(filterUser.count / size), // tổng số các page
+            "page/pages": `${page}/${Math.ceil(filterUser.count / size)}`, // trang hiện tại => trên tổng số trang
             searchString,
-            data: filterUser
+            data: filterUser.filterUser
         })
     } catch (error) {
 

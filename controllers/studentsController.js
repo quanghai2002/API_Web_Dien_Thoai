@@ -21,10 +21,12 @@ const getAllStudents = async (req, res) => {
 
         res.status(200).json({
             message: 'Get all students successfully',
-            size: filterStudent.length,
+            size: filterStudent.filterStudent.length,
             page,
+            pages: Math.ceil(filterStudent.count / size), // tổng số các page
+            "page/pages": `${page}/${Math.ceil(filterStudent.count / size)}`, // trang hiện tại => trên tổng số trang
             searchString,
-            data: filterStudent
+            data: filterStudent.filterStudent
         })
         print('Get all students successfully', outputType.SUCCESS);
 
@@ -36,6 +38,40 @@ const getAllStudents = async (req, res) => {
         })
         print(error, outputType.ERROR);
 
+    }
+
+}
+
+// sort and pagination students
+const sortStudent = async (req, res) => {
+
+    let { page = 1, size = MAX_RECORDS } = req.query;
+    size = size >= MAX_RECORDS ? MAX_RECORDS : size;
+
+    try {
+
+        let sortStudent = await studentResponsitorie.sortStudent({
+            size,
+            page
+        })
+
+        res.status(200).json({
+            message: 'Sort students successfully',
+            size: sortStudent.sortStudent.length,
+            page,
+            pages: Math.ceil(sortStudent.count / size), // tổng số các page
+            "page/pages": `${page}/${Math.ceil(sortStudent.count / size)}`, // trang hiện tại => trên tổng số trang
+            sort: 'asc-NameStudent',
+            data: sortStudent.sortStudent
+        })
+        print('Sort students successfully', outputType.SUCCESS);
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Sort student failed',
+        })
+        print(error, outputType.ERROR);
     }
 
 }
@@ -120,6 +156,8 @@ const deleteStudent = async (req, res) => {
     }
 }
 
+
+
 //generateFakeStudent -> fake data
 const generateFakeStudent = async (req, res) => {
     await studentResponsitorie.generateFakeStudent(req.body);
@@ -136,5 +174,6 @@ export default {
     updateStudents,
     insertStudents,
     deleteStudent,
+    sortStudent,
     generateFakeStudent // có thể xóa => fake data
 }

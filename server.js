@@ -1,6 +1,4 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
 import * as dotenv from 'dotenv'; // must have
 // authentication middleware
 // eslint-disable-next-line import/extensions
