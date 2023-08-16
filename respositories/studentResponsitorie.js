@@ -36,11 +36,42 @@ const getAllStudents = async ({ page, size, searchString }) => {
 
 
     ]);
+
+    // tong so trang tim duoc => khop voi yeu cau
     let count = await Student.count();
 
     return { filterStudent, count }
 
 }
+
+// searchStudent => tìm kiếm theo tên sản sinh viên ...
+const searchStudent = async ({ searchName, page, limit }) => {
+
+    let resultSearch = await Student.find({
+        $or: [
+            {
+                name: { $regex: `.*${searchName}.*`, $options: 'i' } // ignore case
+            },
+        ]
+    })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .exec();
+
+    // tong so trang tim duoc
+    const count = await Student.find({
+        $or: [
+            {
+                name: { $regex: `.*${searchName}.*`, $options: 'i' } // ignore case
+            },
+        ]
+    }).countDocuments();
+
+
+    return { resultSearch, count }
+
+}
+
 
 // sortStudent
 const sortStudent = async ({ page, size }) => {
@@ -155,4 +186,4 @@ async function generateFakeStudent() {
 
 
 
-export default { getAllStudents, insertStudents, generateFakeStudent, getStudentBuyID, updateStudent, deleteStudent, sortStudent }
+export default { getAllStudents, insertStudents, generateFakeStudent, getStudentBuyID, updateStudent, deleteStudent, sortStudent, searchStudent }

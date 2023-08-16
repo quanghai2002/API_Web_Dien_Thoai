@@ -97,26 +97,30 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
         let existingUser = await User.findOne({ email }).exec();
         if (existingUser !== null) {
             throw new Exception('User already exists (Email tồn tại)');
+
+
         }
-        // encode bcrypt password
-        const saltRounds = bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-        const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+        else {
+            // encode bcrypt password
+            const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+            const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
 
+            // insert to database
+            const newUser = await User.create({
+                name,
+                email,
+                password: hashedPassword,
+                phoneNumber,
+                address
+            })
 
-        // insert to database
-        const newUser = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            phoneNumber,
-            address
-        })
+            print('register success', outputType.SUCCESS);
+            // message client
+            return {
+                ...newUser._doc,
+                password: "Not show",
+            }
 
-        print('register success', outputType.SUCCESS);
-        // message client
-        return {
-            ...newUser._doc,
-            password: "Not show",
         }
 
     } catch (error) {

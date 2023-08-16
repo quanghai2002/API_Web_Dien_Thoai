@@ -23,7 +23,7 @@ const getAllStudents = async (req, res) => {
             message: 'Get all students successfully',
             size: filterStudent.filterStudent.length,
             page,
-            pages: Math.ceil(filterStudent.count / size), // tổng số các page
+            pages: Math.ceil(filterStudent.count / size), // tổng số các page,
             "page/pages": `${page}/${Math.ceil(filterStudent.count / size)}`, // trang hiện tại => trên tổng số trang
             searchString,
             data: filterStudent.filterStudent
@@ -41,6 +41,62 @@ const getAllStudents = async (req, res) => {
     }
 
 }
+
+
+// search students => tìm kiếm sản phẩm theo tên
+const searchStudent = async (req, res) => {
+
+    //localhost:3002/api/students/search?name=hai
+    try {
+        let searchName = '';
+        if (req.query?.name) {
+            searchName = req.query?.name
+        }
+        ///
+
+        //localhost:3002/api/students/search?name=hai&page=1
+        let page = 1;
+        if (req.query?.page) {
+            page = req.query?.page
+        }
+
+        const limit = 6;
+
+        // get data khop tu khoa search
+
+        let { resultSearch, count } = await studentResponsitorie.searchStudent({ searchName, page, limit })
+
+        // data return ve API
+        const result = {
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            "page/pages": `${page}/${Math.ceil(count / limit)}`, // trang hiện tại /trên tổng số trang
+            data: resultSearch
+        }
+
+        // 
+        res.status(200).json({
+            message: 'Search students successfully',
+            // size: filterStudent.filterStudent.length,
+            // page,
+            // pages: Math.ceil(filterStudent.count / size), // tổng số các page,
+            // "page/pages": `${page}/${Math.ceil(filterStudent.count / size)}`, // trang hiện tại => trên tổng số trang
+            // searchString,
+            data: result
+        })
+        print('Get all students successfully', outputType.SUCCESS);
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'SEARCH students failed !',
+        })
+        print(error, outputType.ERROR);
+    }
+
+}
+
+
+
 
 // sort and pagination students
 const sortStudent = async (req, res) => {
@@ -175,5 +231,6 @@ export default {
     insertStudents,
     deleteStudent,
     sortStudent,
+    searchStudent,
     generateFakeStudent // có thể xóa => fake data
 }

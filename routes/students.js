@@ -7,6 +7,9 @@ const router = express.Router();
 // get all students  and pagination
 router.get('/', studentsController.getAllStudents);
 
+// search students
+router.get('/search', studentsController.searchStudent);
+
 // pagination and sort students
 router.get('/sort', studentsController.sortStudent);
 

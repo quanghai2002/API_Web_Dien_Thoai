@@ -5,21 +5,21 @@ const ObjectId = Schema.ObjectId;
 
 const User = mongoose.model('User',
     new Schema({
-        id: ObjectId,
+        id: {
+            type: ObjectId,
+
+        },
+
         name: {
             type: String,
             required: true,
-            validate: {
-                validator: (value) => {
-                    return value.length > 3
-                },
-                messages: "User name must be at least 3 characters"
-            },
+
         },
         email: {
             type: String,
             required: true,
             unique: true,
+            index: true,
             validate: {
                 validator: (value) => {
                     return isEmail

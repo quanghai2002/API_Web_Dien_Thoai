@@ -67,7 +67,7 @@ const register = async (req, res) => {
 
         let user = await useResponsitorie.register({ name, email, password, phoneNumber, address });
 
-        res.status(201).json({
+        res.status(200).json({
             message: 'Register user successfully',
             data: user
         })
@@ -76,7 +76,7 @@ const register = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(404).json({
-            message: 'Register user failed'
+            message: 'Register user failed, email đã tồn tại'
         })
 
     }
