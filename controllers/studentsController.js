@@ -71,6 +71,7 @@ const searchStudent = async (req, res) => {
             currentPage: page,
             totalPages: Math.ceil(count / limit),
             "page/pages": `${page}/${Math.ceil(count / limit)}`, // trang hiện tại /trên tổng số trang
+            searchString: searchName,
             data: resultSearch
         }
 
