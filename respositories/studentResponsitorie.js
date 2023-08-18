@@ -154,7 +154,7 @@ const updateStudent = async ({ id, name, email, languages, gender, phoneNumber, 
 // delete student buy ID
 const deleteStudent = async (studentId) => {
     try {
-        const countDeleteStudent = await Student.deleteOne(studentId);
+        const countDeleteStudent = await Student.findByIdAndDelete(studentId);
         return countDeleteStudent;
 
     } catch (error) {

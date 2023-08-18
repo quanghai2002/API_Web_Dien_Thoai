@@ -195,13 +195,15 @@ const insertStudents = async (req, res) => {
 
 // delete student 
 const deleteStudent = async (req, res) => {
-    let studentId = req.params.id;
+    let studentId = req.params?.idDelete;
+
     try {
         const studentDeleteCount = await studentResponsitorie.deleteStudent(studentId);
         res.status(200).json({
             message: 'DELETE students buy ID successfully',
             countDelete: studentDeleteCount.deletedCount
         })
+        print('DELETE students buy ID successfully', outputType.SUCCESS);
 
 
 

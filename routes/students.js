@@ -23,7 +23,7 @@ router.post('/insert', verifyTokenAndAdmin, studentsController.insertStudents);
 router.patch('/update', verifyTokenAndAdmin, studentsController.updateStudents);
 
 // delete one student buy ID
-router.get('/delete/:idDelete', verifyTokenAndAdmin, studentsController.deleteStudent);
+router.delete('/delete/:idDelete', verifyTokenAndAdmin, studentsController.deleteStudent);
 
 // get students buy id
 router.get('/:id', studentsController.getStudentsBuyID);
