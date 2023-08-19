@@ -150,6 +150,56 @@ const deleteUser = async (req, res) => {
 
 }
 
+// Forget Password
+const forget_password = async (req, res) => {
+
+    try {
+
+        let forwordPassword = await useResponsitorie.forgetPassWord(req, res);
+
+        print('forget password successfully', outputType.SUCCESS);
+        res.status(200).json({
+            data: forwordPassword,
+            message: 'Check email đã gửi để reset password',
+
+        })
+
+    } catch (error) {
+        console.log('error', error);
+        print(error, outputType.ERROR);
+        res.status(500).json({
+            message: 'forget password failed',
+
+        })
+    }
+}
+
+
+//reset_password
+const reset_password = async (req, res) => {
+
+    try {
+        let dataReset = await useResponsitorie.resetPassword(req, res);
+        print('reset password successfully', outputType.SUCCESS);
+        res.status(200).json({
+            message: 'reset password successfully',
+            'data_Reset': dataReset,
+
+        })
+
+
+    } catch (error) {
+        console.log('error', error);
+        print(error, outputType.ERROR);
+        res.status(500).json({
+            message: 'reset password failed',
+
+        })
+    }
+
+
+}
+
 // refreshToken khi access token => hết hạn
 const refreshToken = async (req, res) => {
     // khi access token => hết hạn =>
@@ -173,6 +223,6 @@ const refreshToken = async (req, res) => {
 
 
 
-export default { login, register, getAllUser, deleteUser, refreshToken, logout }
+export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password }
 
 

@@ -24,11 +24,18 @@ router.post('/login',
 )
 
 // user register
-router.post('/register', userController.register)
+router.post('/register', userController.register);
 
+
+// forget password
+router.post('/forget_password', userController.forget_password);
+
+// reset password
+router.get('/reset_password', userController.reset_password);
 
 // refresh Token => khi access Token => hết hạn
 router.post('/refreshToken', userController.refreshToken)
+
 
 
 // log out

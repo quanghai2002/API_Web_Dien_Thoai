@@ -53,6 +53,10 @@ const User = mongoose.model('User',
         updatedAt: {
             type: Date,
             default: Date.now
+        },
+        token: {
+            type: String,
+            default: ''
         }
 
 

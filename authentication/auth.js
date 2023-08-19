@@ -6,8 +6,9 @@ import { print, outputType } from '../helpers/print.js';
 const checkToken = (req, res, next) => {
     // Authentication
     // không áp dụng=> login, register
+    console.log(req?.url)
 
-    if (req?.url?.toLowerCase().trim() === '/api/users/login' || req?.url?.toLowerCase().trim() === '/api/users/register') {
+    if (req?.url?.toLowerCase().trim() === '/api/users/login' || req?.url?.toLowerCase().trim() === '/api/users/register' || req?.url?.toLowerCase().trim() === '/api/users/forget_password' || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)) {
         next()
         return;
     }

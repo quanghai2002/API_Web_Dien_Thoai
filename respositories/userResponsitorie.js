@@ -4,6 +4,51 @@ import { print, outputType } from '../helpers/print.js';
 import { User } from '../models/index.js';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import randomstring from 'randomstring';
+import asyncHandler from "express-async-handler"
+
+
+const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
+    try {
+        const transporter = await nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_NAME,
+                pass: process.env.EMAIL_APP_PASSWORD
+            }
+
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_NAME,
+            to: email,
+            subject: 'Reset password',
+            html: `<p> Xin chào :${name} , Please coppy the link and <a href="http://localhost:3002/api/users/reset_password?token=${token}" > reset password  </a> </p> `
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+
+            if (error) {
+                console.log(error);
+            } else {
+                console.log(`Mail has been sent => ${info.accepted[0]}`);
+            }
+
+        })
+
+    } catch (error) {
+        res.status(400).send({
+            success: false,
+            msg: error.message
+        })
+    }
+
+}
+
+)
 
 let refreshTokenMoi = [];
 
@@ -182,6 +227,72 @@ const deleteUser = async (req, res) => {
 
 }
 
+
+// Forget password
+const forgetPassWord = async (req, res) => {
+    let email = req.body?.email;
+
+    const userData = await User.findOne({ email: email });
+
+    if (userData) {
+        const randomString = randomstring.generate();
+        const data = await User.updateOne({ email: email }, {
+            $set: {
+                token: randomString
+            }
+        })
+        sendResetPasswordMail(userData.name, userData.email, randomString);
+        return data
+
+    }
+    else {
+        print('Không tìm thấy email', outputType.ERROR);
+        res.status(500).json({
+            message: 'không tìm thấy email',
+
+        })
+    }
+
+
+
+}
+
+// resetPassword
+const resetPassword = async (req, res) => {
+
+    const token = req?.query?.token;
+
+
+
+    const tokenData = await User.findOne({ token: token });
+    if (tokenData) {
+        const password = req.body?.password;
+
+        // encode bcrypt password
+        const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+        const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+
+        let dataReset = User.findByIdAndUpdate({ _id: tokenData._id }, {
+            $set: {
+                password: hashedPassword,
+                token: ''
+            }
+        },
+            { new: true })
+
+        return dataReset
+
+    }
+    else {
+        print('Không tìm thấy email user', outputType.ERROR);
+        res.status(500).json({
+            message: 'không tìm thấy email user',
+
+        })
+    }
+
+}
+
 // refreshToken khi access token => hết hạn
 const refreshTokenlai = async (req, res) => {
     // khi access token => hết hạn =>
@@ -270,4 +381,4 @@ const refreshTokenlai = async (req, res) => {
 
 }
 
-export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout }
+export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword }
