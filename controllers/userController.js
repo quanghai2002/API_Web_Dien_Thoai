@@ -42,6 +42,27 @@ const login = async (req, res) => {
     }
 }
 
+// LOGIN USER GOOGLE
+const loginGoogle = async (req, res) => {
+
+
+    // const { email, password } = req.body
+
+
+    try {
+        //call repository
+        await useResponsitorie.loginGoogle(req, res)
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(404).json({
+            message: 'Login google failed'
+        })
+
+    }
+}
+
 // user logout => clear refresh token
 // access token => clear => redux store
 const logout = async (req, res) => {
@@ -223,6 +244,6 @@ const refreshToken = async (req, res) => {
 
 
 
-export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password }
+export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle }
 
 

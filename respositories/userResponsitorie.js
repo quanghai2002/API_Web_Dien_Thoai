@@ -6,9 +6,10 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import randomstring from 'randomstring';
-import asyncHandler from "express-async-handler"
+import asyncHandler from "express-async-handler";
+import { OAuth2Client } from 'google-auth-library';
 
-
+// reset password
 const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
     try {
         const transporter = await nodemailer.createTransport({
@@ -117,6 +118,100 @@ const login = async ({ email, password }, res) => {
 
 }
 
+// --------------------------------------------------
+
+// LOGIN Google
+const loginGoogle = async (req, res) => {
+
+    // toke login google
+    const { tokenId } = req.body
+    // id Google account localhost 5173
+    const idGoogle = process.env.CLIENT_ID_LOGIN_GOOGLE;
+
+    const client = new OAuth2Client(idGoogle);
+
+    client.verifyIdToken({ idToken: tokenId, audience: idGoogle })
+        .then(async (response) => {
+            const { email_verified, name, email, picture, exp, iat } = response?.payload;
+
+
+            if (email_verified) {
+
+                const userGoogle = await User.findOne({ email: email }).exec();
+
+                if (userGoogle) {
+                    // tìm thaaysa email => trong db
+                    const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                    const { _id, name, email } = userGoogle;
+
+                    //
+                    print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
+                    res.status(200).json({
+                        message: 'Login with GOOGLE => thành công',
+                        token,
+                        user: {
+                            _id, name,
+                            email,
+                            picture,
+                            exp, iat
+                        }
+                    })
+                }
+                else {
+                    // encode bcrypt password
+                    const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+                    const hashedPassword = await bcrypt.hash(email.toString(), saltRounds);
+                    let password = hashedPassword;
+
+                    let newUser = new User({
+                        name,
+                        email,
+                        password,
+                        address: "Account-Login-With-Google"
+                        // picture,
+                        // exp,
+                        // iat
+                    });
+
+                    const newUserGoogle = await newUser.save();
+                    if (newUserGoogle) {
+                        const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                        const { _id, name, email } = newUserGoogle;
+                        print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
+                        res.status(200).json({
+                            message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
+                            token,
+                            user: {
+                                _id, name, email
+                                //  picture, exp, iat
+                            }
+                        })
+                    }
+
+                    else {
+                        console.log('đã xảy ra sự cố , lưu thất user Google thất bại')
+                        res.status(404).json({
+                            message: 'something went wrong, đã xảy ra sự cố !'
+                        })
+
+                    }
+
+                }
+            }
+
+
+        }).catch((error) => {
+            console.log(error)
+        })
+
+
+
+
+}
+
+
+
+// --------------------------------------------------
 /// user logout => clear refresh token
 // access token => clear => redux store
 const logout = async (req, res) => {
@@ -381,4 +476,4 @@ const refreshTokenlai = async (req, res) => {
 
 }
 
-export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword }
+export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle }

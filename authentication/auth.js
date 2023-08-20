@@ -8,31 +8,39 @@ const checkToken = (req, res, next) => {
     // không áp dụng=> login, register
     console.log(req?.url)
 
-    if (req?.url?.toLowerCase().trim() === '/api/users/login' || req?.url?.toLowerCase().trim() === '/api/users/register' || req?.url?.toLowerCase().trim() === '/api/users/forget_password' || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)) {
+    if (req?.url?.toLowerCase().trim() === '/api/users/login'
+        || req?.url?.toLowerCase().trim() === '/api/users/register'
+        || req?.url?.toLowerCase().trim() === '/api/users/forget_password'
+        || req?.url?.toLowerCase().trim() === '/api/users/logingoogle'
+        || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)
+    ) {
         next()
         return;
     }
-
-    // other request
-    // get and validate => token => verify Token
-    const token = req?.headers?.authorization?.split(' ')[1];
-    try {
-        const jwtObject = jwt.verify(token, process.env.JWT_SECRET);
-        const isExpired = Date.now() >= jwtObject.exp * 1000;
-        if (isExpired) {
-            res.status(401).json({
-                message: 'token is valid,đã hết hạn',
+    else {
+        // other request
+        // get and validate => token => verify Token
+        const token = req?.headers?.authorization?.split(' ')[1];
+        try {
+            const jwtObject = jwt.verify(token, process.env.JWT_SECRET);
+            const isExpired = Date.now() >= jwtObject.exp * 1000;
+            if (isExpired) {
+                res.status(401).json({
+                    message: 'token is valid,đã hết hạn',
+                });
+                res.end();
+            } else {
+                next();
+            }
+        } catch (error) {
+            print(error, outputType.ERROR);
+            res.status(500).json({
+                message: 'token is valid, sai token',
             });
-            res.end();
-        } else {
-            next();
         }
-    } catch (error) {
-        print(error, outputType.ERROR);
-        res.status(500).json({
-            message: 'token is valid, sai token',
-        });
+
     }
+
 };
 
 // verifyTokenAndAdmin => khi là ADMIN => mới CRUD => ...

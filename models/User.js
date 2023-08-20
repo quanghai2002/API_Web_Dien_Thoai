@@ -34,12 +34,12 @@ const User = mongoose.model('User',
         },
         phoneNumber: {
             type: String,
-            required: true,
+
 
         },
         address: {
             type: String,
-            required: true,
+
 
         },
         admin: {
