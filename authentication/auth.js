@@ -13,6 +13,7 @@ const checkToken = (req, res, next) => {
         || req?.url?.toLowerCase().trim() === '/api/users/forget_password'
         || req?.url?.toLowerCase().trim() === '/api/users/logingoogle'
         || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)
+
     ) {
         next()
         return;

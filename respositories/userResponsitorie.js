@@ -9,6 +9,8 @@ import randomstring from 'randomstring';
 import asyncHandler from "express-async-handler";
 import { OAuth2Client } from 'google-auth-library';
 
+
+
 // reset password
 const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
     try {
@@ -120,91 +122,118 @@ const login = async ({ email, password }, res) => {
 
 // --------------------------------------------------
 
-// LOGIN Google
-const loginGoogle = async (req, res) => {
+// LOGIN with =>  GOOGLE
+const loginGoogle = async (req, res, next) => {
 
-    // toke login google
-    const { tokenId } = req.body
     // id Google account localhost 5173
     const idGoogle = process.env.CLIENT_ID_LOGIN_GOOGLE;
 
-    const client = new OAuth2Client(idGoogle);
+    // token login google
+    const { tokenId, exp } = req.body
+    // exp => time hết hạn token => clientGoogle
+    const expTokenClientGoogle = Number.parseFloat(exp);
 
-    client.verifyIdToken({ idToken: tokenId, audience: idGoogle })
-        .then(async (response) => {
-            const { email_verified, name, email, picture, exp, iat } = response?.payload;
+    // check token => google => hết hạn hay chưa
+    const isExpired = Date.now() >= expTokenClientGoogle * 1000;
+    // console.log({ isExpired });
 
+    console.log({ isExpired });
+    // nếu token hết hạn => res => login lại
+    if (isExpired) {
+        print('Token GOOGLE => HẾT HẠN => Đăng nhập GOOGLE ACCOUNT THẤT BẠI', outputType.ERROR);
+        res.status(500).json({
+            message: 'Token GOOGLE => HẾT HẠN => Đăng nhập GOOGLE ACCOUNT THẤT BẠI',
+            isLoginGoogle: false
+        })
 
-            if (email_verified) {
+    }
+    // nếu còn hạn thực hiện bình thường
+    else {
+        // verify token google
+        const client = new OAuth2Client(idGoogle);
 
-                const userGoogle = await User.findOne({ email: email }).exec();
+        client.verifyIdToken({ idToken: tokenId, audience: idGoogle })
+            .then(async (response) => {
+                // data Login => with => GOOGLE
+                const { email_verified, name, email, picture, exp, iat } = response?.payload;
 
-                if (userGoogle) {
-                    // tìm thaaysa email => trong db
-                    const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
-                    const { _id, name, email } = userGoogle;
+                if (email_verified) {
+                    const userGoogle = await User.findOne({ email: email }).exec();
 
-                    //
-                    print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
-                    res.status(200).json({
-                        message: 'Login with GOOGLE => thành công',
-                        token,
-                        user: {
-                            _id, name,
-                            email,
-                            picture,
-                            exp, iat
-                        }
-                    })
-                }
-                else {
-                    // encode bcrypt password
-                    const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-                    const hashedPassword = await bcrypt.hash(email.toString(), saltRounds);
-                    let password = hashedPassword;
+                    if (userGoogle) {
+                        // tìm thấy email => đã REGISTER => trong database
+                        const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                        // get info => user => db
+                        const { _id, name, email } = userGoogle;
 
-                    let newUser = new User({
-                        name,
-                        email,
-                        password,
-                        address: "Account-Login-With-Google"
-                        // picture,
-                        // exp,
-                        // iat
-                    });
-
-                    const newUserGoogle = await newUser.save();
-                    if (newUserGoogle) {
-                        const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
-                        const { _id, name, email } = newUserGoogle;
+                        // res => return Fontend
                         print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
                         res.status(200).json({
-                            message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
+                            message: 'Login with GOOGLE => thành công',
                             token,
                             user: {
-                                _id, name, email
-                                //  picture, exp, iat
+                                _id, name,
+                                email,
+                                picture,
+                                exp, iat
                             }
                         })
                     }
-
                     else {
-                        console.log('đã xảy ra sự cố , lưu thất user Google thất bại')
-                        res.status(404).json({
-                            message: 'something went wrong, đã xảy ra sự cố !'
-                        })
+                        // không tìm thấy email => trong db => lưu mới vào database
+                        // encode bcrypt password
+                        const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+                        const hashedPassword = await bcrypt.hash(email.toString(), saltRounds);
+                        let password = hashedPassword;
+
+                        let newUser = new User({
+                            name,
+                            email,
+                            password,
+                            address: "Account-Login-With-Google"
+                            // picture,
+                            // exp,
+                            // iat
+                        });
+
+                        // save => new user => database
+                        const newUserGoogle = await newUser.save();
+                        if (newUserGoogle) {
+                            const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                            const { _id, name, email } = newUserGoogle;
+                            print('Đăng nhập GOOGLE ACCOUNT => thành công', outputType.SUCCESS);
+                            res.status(200).json({
+                                message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
+                                token,
+                                user: {
+                                    _id, name, email
+                                    //  picture, exp, iat
+                                },
+                                exp
+                            })
+                        }
+
+                        else {
+                            console.log('đã xảy ra sự cố , lưu thất user Google=> thất bại')
+                            res.status(404).json({
+                                message: 'something went wrong, đã xảy ra sự cố ! => add USER GOOGLE => failed'
+                            })
+
+                        }
 
                     }
-
                 }
-            }
 
 
-        }).catch((error) => {
-            console.log(error)
-        })
+            }).catch((error) => {
+                console.log(error);
+                console.log("không lọt vào đk đúng");
+                res.status(400).json({
+                    message: 'Login with GOOGLE => THẤT BẠI => verifyIdToken FAILED =>Nhập sai TOKEN Google',
 
-
+                })
+            })
+    }
 
 
 }

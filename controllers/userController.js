@@ -4,6 +4,7 @@ import { useResponsitorie } from '../respositories/index.js';
 import { EventEmitter } from 'node:events';
 import { print, outputType } from '../helpers/print.js';
 import { MAX_RECORDS } from '../Global/constants.js';
+
 const myEvent = new EventEmitter();
 // listen
 
@@ -44,10 +45,6 @@ const login = async (req, res) => {
 
 // LOGIN USER GOOGLE
 const loginGoogle = async (req, res) => {
-
-
-    // const { email, password } = req.body
-
 
     try {
         //call repository
@@ -240,7 +237,6 @@ const refreshToken = async (req, res) => {
 
 
 }
-
 
 
 
