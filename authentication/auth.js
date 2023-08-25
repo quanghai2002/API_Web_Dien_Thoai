@@ -13,6 +13,7 @@ const checkToken = (req, res, next) => {
         || req?.url?.toLowerCase().trim() === '/api/users/forget_password'
         || req?.url?.toLowerCase().trim() === '/api/users/logingoogle'
         || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)
+        || req?.url?.toLowerCase().trim().includes(`/api/users/loginphonenumber`)
 
     ) {
         next()
@@ -27,7 +28,9 @@ const checkToken = (req, res, next) => {
             const isExpired = Date.now() >= jwtObject.exp * 1000;
             if (isExpired) {
                 res.status(401).json({
-                    message: 'token is valid,đã hết hạn',
+                    message: 'token is valid,đã hết hạn => Đăng nhập lại',
+                    expired: true
+
                 });
                 res.end();
             } else {
@@ -36,7 +39,7 @@ const checkToken = (req, res, next) => {
         } catch (error) {
             print(error, outputType.ERROR);
             res.status(500).json({
-                message: 'token is valid, sai token',
+                message: 'token is nhập sai token',
             });
         }
 
@@ -62,7 +65,8 @@ const verifyTokenAndAdmin = (req, res, next) => {
         const isExpired = Date.now() >= jwtObject.exp * 1000;
         if (isExpired) {
             res.status(401).json({
-                message: 'token is valid,đã hết hạn',
+                message: 'token is valid,đã hết hạn => Đăng nhập lại',
+                expired: true
             });
             res.end();
         } else {
@@ -80,7 +84,7 @@ const verifyTokenAndAdmin = (req, res, next) => {
     } catch (error) {
         print(error, outputType.ERROR);
         res.status(500).json({
-            message: 'token is valid, sai token',
+            message: 'token is valid, nhập sai token',
         });
     }
 

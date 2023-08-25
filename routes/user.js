@@ -26,6 +26,9 @@ router.post('/login',
 // LOGIN- Google
 router.post('/logingoogle', userController.loginGoogle);
 
+// Login OTP_Phone_Number
+router.post('/loginphonenumber', userController.loginPhoneNumber);
+
 
 // user register
 router.post('/register', userController.register);

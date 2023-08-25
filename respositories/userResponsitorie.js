@@ -123,13 +123,33 @@ const login = async ({ email, password }, res) => {
 // --------------------------------------------------
 
 // LOGIN with =>  GOOGLE
-const loginGoogle = async (req, res, next) => {
+const loginGoogle = async (req, res) => {
 
     // id Google account localhost 5173
     const idGoogle = process.env.CLIENT_ID_LOGIN_GOOGLE;
 
     // token login google
-    const { tokenId, exp } = req.body
+    const { code } = req.body;
+
+    // 
+    const oAuth2Client = new OAuth2Client(
+        process.env.CLIENT_ID_LOGIN_GOOGLE,
+        process.env.CLIENT_SECRET_GOOGLE,
+        'postmessage',
+    );
+
+    // get token => decode
+    const tokens = await oAuth2Client.getToken(code);
+
+
+    // get token Id and exp
+    const tokenId = tokens?.tokens?.id_token;
+    const exp = tokens?.tokens?.expiry_date;
+
+    // console.log({ tokenId });
+    // console.log({ exp });
+
+    // ------------------------------
     // exp => time hết hạn token => clientGoogle
     const expTokenClientGoogle = Number.parseFloat(exp);
 
@@ -155,7 +175,7 @@ const loginGoogle = async (req, res, next) => {
         client.verifyIdToken({ idToken: tokenId, audience: idGoogle })
             .then(async (response) => {
                 // data Login => with => GOOGLE
-                const { email_verified, name, email, picture, exp, iat } = response?.payload;
+                const { email_verified, name, email, picture, exp } = response?.payload;
 
                 if (email_verified) {
                     const userGoogle = await User.findOne({ email: email }).exec();
@@ -164,7 +184,7 @@ const loginGoogle = async (req, res, next) => {
                         // tìm thấy email => đã REGISTER => trong database
                         const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
                         // get info => user => db
-                        const { _id, name, email } = userGoogle;
+                        const { _id, name, email, admin } = userGoogle;
 
                         // res => return Fontend
                         print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
@@ -175,7 +195,7 @@ const loginGoogle = async (req, res, next) => {
                                 _id, name,
                                 email,
                                 picture,
-                                exp, iat
+                                admin,
                             }
                         })
                     }
@@ -190,7 +210,8 @@ const loginGoogle = async (req, res, next) => {
                             name,
                             email,
                             password,
-                            address: "Account-Login-With-Google"
+                            address: "Account-Login-With-Google",
+                            admin: false
                             // picture,
                             // exp,
                             // iat
@@ -200,13 +221,13 @@ const loginGoogle = async (req, res, next) => {
                         const newUserGoogle = await newUser.save();
                         if (newUserGoogle) {
                             const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
-                            const { _id, name, email } = newUserGoogle;
+                            const { _id, name, email, admin } = newUserGoogle;
                             print('Đăng nhập GOOGLE ACCOUNT => thành công', outputType.SUCCESS);
                             res.status(200).json({
                                 message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
                                 token,
                                 user: {
-                                    _id, name, email
+                                    _id, name, email, admin
                                     //  picture, exp, iat
                                 },
                                 exp
@@ -238,6 +259,25 @@ const loginGoogle = async (req, res, next) => {
 
 }
 
+
+// loginPhoneNumber
+const loginPhoneNumber = async (req, res) => {
+
+    const phoneNumber = req.body?.phone;
+
+
+    // create token
+    const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: '16d' });
+
+
+    print('Đăng nhập PHONE NUMBER thành công', outputType.SUCCESS);
+    res.status(200).json({
+        message: 'Login Phone Number=> thành công',
+        data: phoneNumber,
+        token
+
+    })
+}
 
 
 // --------------------------------------------------
@@ -505,4 +545,4 @@ const refreshTokenlai = async (req, res) => {
 
 }
 
-export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle }
+export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber }

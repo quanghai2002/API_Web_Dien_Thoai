@@ -27,9 +27,11 @@
     "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^9.0.1",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "mongoose": "^7.4.3",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.4",
+    "otp-generator": "^4.0.1",
     "randomstring": "^1.3.0",
     "save-dev": "^0.0.1-security",
     "validator": "^13.11.0"

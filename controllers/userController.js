@@ -60,6 +60,24 @@ const loginGoogle = async (req, res) => {
     }
 }
 
+
+// Login loginPhoneNumber
+const loginPhoneNumber = async (req, res) => {
+
+    try {
+        //call repository
+        await useResponsitorie.loginPhoneNumber(req, res)
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(404).json({
+            message: 'Login PhoneNumber failed'
+        })
+
+    }
+}
+
 // user logout => clear refresh token
 // access token => clear => redux store
 const logout = async (req, res) => {
@@ -240,6 +258,6 @@ const refreshToken = async (req, res) => {
 
 
 
-export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle }
+export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle, loginPhoneNumber }
 
 
