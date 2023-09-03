@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv'; // must have
 // authentication middleware
 // eslint-disable-next-line import/extensions
 import checkToken from './authentication/auth.js';
-import { userRoute, studentsRoute } from './routes/index.js';
+import { userRoute, phoneRoute } from './routes/index.js';
+// import { userRoute, studentsRoute } from './routes/index.js';
 import connect from './database/database.js';
 // const cors = require("cors");
 import cors from "cors";
@@ -32,8 +33,12 @@ app.all('/', function (req, res, next) {
 });
 
 // routes
+// user
 app.use('/api/users', userRoute);
-app.use('/api/students', studentsRoute);
+// app.use('/api/students', studentsRoute);
+
+// phone
+app.use('/api/phone', phoneRoute);
 
 
 app.get('/', (req, res) => {
@@ -41,7 +46,7 @@ app.get('/', (req, res) => {
 });
 
 // 
-const post = process.env.POST || 3000;
+const post = process.env.POST || 8081;
 
 app.listen(post, async () => {
     await connect();

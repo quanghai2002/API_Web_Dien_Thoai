@@ -12,12 +12,13 @@ import { OAuth2Client } from 'google-auth-library';
 
 
 // reset password
-const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
+const sendResetPasswordMail = asyncHandler(async (name, email, token, req, res) => {
+
     try {
         const transporter = await nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL_NAME,
                 pass: process.env.EMAIL_APP_PASSWORD
@@ -25,11 +26,13 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
 
         });
 
+
+
         const mailOptions = {
             from: process.env.EMAIL_NAME,
             to: email,
             subject: 'Reset password',
-            html: `<p> Xin chào :${name} , Please coppy the link and <a href="http://localhost:3002/api/users/reset_password?token=${token}" > reset password  </a> </p> `
+            html: `<p> Xin chào :${name} , Please coppy the link and <a href="http://localhost:8080/api/users/reset_password?tokens=${token}" > reset password  </a> </p> `
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -37,7 +40,12 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
             if (error) {
                 console.log(error);
             } else {
-                console.log(`Mail has been sent => ${info.accepted[0]}`);
+                console.log(`Mail has been sent, email đã được gửi tới => ${info.accepted[0]}`);
+
+                res.status(200).json({
+                    message: 'Check email đã gửi để reset password',
+                })
+
             }
 
         })
@@ -45,7 +53,8 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token) => {
     } catch (error) {
         res.status(400).send({
             success: false,
-            msg: error.message
+            msg: error.message,
+            message: 'không gửi được email',
         })
     }
 
@@ -58,15 +67,18 @@ let refreshTokenMoi = [];
 // user login
 const login = async ({ email, password }, res) => {
 
-    // check user and email => database
+    // check user and email => database => đã tồn tại hay chưa
     // findOne db => User
     let existingUser = await User.findOne({ email: email }).exec();
 
     if (existingUser) {
-        // so sanh password
+        // nếu tìm thấy email => check password => xem có đúng không
+        // so sánh password
         let isMatch = await bcrypt.compare(password.toString(), existingUser.password);
         if (isMatch) {
-            print('login successful', outputType.SUCCESS);
+            // nếu đúng password
+            print('login successful,đăng nhập thành công', outputType.SUCCESS);
+
             // create JWT => khi login successful => payload token -> not password user
             let { password, ...notShowPassword } = existingUser._doc;
 
@@ -77,8 +89,9 @@ const login = async ({ email, password }, res) => {
                     admin: existingUser.admin,
                 },
                 process.env.JWT_SECRET,
-                // { expiresIn: 60} // expires in 60s
-                { expiresIn: "7 days" } // expires in 10 day => ke tu khi login
+                // { expiresIn: 60 } // expires in 60s
+                { expiresIn: "16 days" } // expires in 10 day => ke tu khi login
+                // { expiresIn: "1h" } // expires in 10 day => ke tu khi login
 
             );
 
@@ -108,13 +121,23 @@ const login = async ({ email, password }, res) => {
                 token: accessToken,
             }
         }
+        // nếu sai password
         else {
-            throw new Exception('Wrong email or password !');
+            print('Wrong email or password !, sai mật khẩu hoặc email, thử lại !', outputType.ERROR);
+            res.status(404).json({
+                message: 'Login user failed, login thất bại, sai mật khẩu hoặc email, thử lại !'
+            })
         }
 
     }
+    // nếu không tìm thấy email => thông báo đăng nhập thất bại => vui lòng thử lại
     else {
-        throw new Exception('Wrong email or password!');
+
+        print('Wrong email or password !, sai mật khẩu hoặc email, thử lại !', outputType.ERROR);
+        res.status(404).json({
+            message: 'Login user failed, login thất bại, sai mật khẩu hoặc email, thử lại !'
+        })
+
     }
 
 
@@ -131,6 +154,7 @@ const loginGoogle = async (req, res) => {
     // token login google
     const { code } = req.body;
 
+
     // 
     const oAuth2Client = new OAuth2Client(
         process.env.CLIENT_ID_LOGIN_GOOGLE,
@@ -141,6 +165,7 @@ const loginGoogle = async (req, res) => {
     // get token => decode
     const tokens = await oAuth2Client.getToken(code);
 
+    //console.log({ tokens })
 
     // get token Id and exp
     const tokenId = tokens?.tokens?.id_token;
@@ -162,12 +187,12 @@ const loginGoogle = async (req, res) => {
     if (isExpired) {
         print('Token GOOGLE => HẾT HẠN => Đăng nhập GOOGLE ACCOUNT THẤT BẠI', outputType.ERROR);
         res.status(500).json({
-            message: 'Token GOOGLE => HẾT HẠN => Đăng nhập GOOGLE ACCOUNT THẤT BẠI',
+            message: 'Token GOOGLE => đã HẾT HẠN => Đăng nhập GOOGLE ACCOUNT THẤT BẠI',
             isLoginGoogle: false
         })
 
     }
-    // nếu còn hạn thực hiện bình thường
+    // nếu còn hạn thực hiện => bình thường
     else {
         // verify token google
         const client = new OAuth2Client(idGoogle);
@@ -177,14 +202,16 @@ const loginGoogle = async (req, res) => {
                 // data Login => with => GOOGLE
                 const { email_verified, name, email, picture, exp } = response?.payload;
 
+
                 if (email_verified) {
                     const userGoogle = await User.findOne({ email: email }).exec();
+
 
                     if (userGoogle) {
                         // tìm thấy email => đã REGISTER => trong database
                         const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
                         // get info => user => db
-                        const { _id, name, email, admin } = userGoogle;
+                        const { _id, username, email, admin, orders, reviews, phoneNumber } = userGoogle;
 
                         // res => return Fontend
                         print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
@@ -192,10 +219,15 @@ const loginGoogle = async (req, res) => {
                             message: 'Login with GOOGLE => thành công',
                             token,
                             user: {
-                                _id, name,
+                                _id,
+                                username,
                                 email,
+                                phoneNumber,
                                 picture,
                                 admin,
+                                orders,
+                                reviews
+
                             }
                         })
                     }
@@ -207,7 +239,7 @@ const loginGoogle = async (req, res) => {
                         let password = hashedPassword;
 
                         let newUser = new User({
-                            name,
+                            username: name,
                             email,
                             password,
                             address: "Account-Login-With-Google",
@@ -221,13 +253,13 @@ const loginGoogle = async (req, res) => {
                         const newUserGoogle = await newUser.save();
                         if (newUserGoogle) {
                             const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
-                            const { _id, name, email, admin } = newUserGoogle;
+                            const { _id, username, email, admin } = newUserGoogle;
                             print('Đăng nhập GOOGLE ACCOUNT => thành công', outputType.SUCCESS);
                             res.status(200).json({
                                 message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
                                 token,
                                 user: {
-                                    _id, name, email, admin
+                                    _id, username, email, admin
                                     //  picture, exp, iat
                                 },
                                 exp
@@ -272,7 +304,7 @@ const loginPhoneNumber = async (req, res) => {
 
     print('Đăng nhập PHONE NUMBER thành công', outputType.SUCCESS);
     res.status(200).json({
-        message: 'Login Phone Number=> thành công',
+        message: 'Login Phone Number=> đăng nhập số điện thoại thành công',
         data: phoneNumber,
         token
 
@@ -299,13 +331,13 @@ const logout = async (req, res) => {
 
 
 // register user
-const register = async ({ name, email, password, phoneNumber, address }) => {
+const register = async ({ username, email, password, phoneNumber, address }) => {
     // validation
     try {
 
         let existingUser = await User.findOne({ email }).exec();
         if (existingUser !== null) {
-            throw new Exception('User already exists (Email tồn tại)');
+            throw new Exception('User already exists (Email đã tồn tại, nhập email khác !)');
 
 
         }
@@ -316,14 +348,14 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
 
             // insert to database
             const newUser = await User.create({
-                name,
+                username,
                 email,
                 password: hashedPassword,
                 phoneNumber,
                 address
             })
 
-            print('register success', outputType.SUCCESS);
+            print('register success, đăng kí thành công', outputType.SUCCESS);
             // message client
             return {
                 ...newUser._doc,
@@ -336,7 +368,7 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
         // check model validations
 
         print(error, outputType.ERROR);
-        throw new Exception('cannot register user');
+        throw new Exception('cannot register user,đăng kí thât bại !');
 
 
     }
@@ -392,10 +424,9 @@ const deleteUser = async (req, res) => {
 }
 
 
-// Forget password
+// Forget password 
 const forgetPassWord = async (req, res) => {
     let email = req.body?.email;
-
     const userData = await User.findOne({ email: email });
 
     if (userData) {
@@ -405,7 +436,7 @@ const forgetPassWord = async (req, res) => {
                 token: randomString
             }
         })
-        sendResetPasswordMail(userData.name, userData.email, randomString);
+        sendResetPasswordMail(userData.username, userData.email, randomString, req, res);
         return data
 
     }
@@ -425,8 +456,6 @@ const forgetPassWord = async (req, res) => {
 const resetPassword = async (req, res) => {
 
     const token = req?.query?.token;
-
-
 
     const tokenData = await User.findOne({ token: token });
     if (tokenData) {
@@ -464,6 +493,8 @@ const refreshTokenlai = async (req, res) => {
     try {
         // take refresh token => user
         let refresTokenOld = await req.headers.cookie.split('=')[1];
+
+        console.log({ refresTokenOld })
 
         if (!refresTokenOld) {
             return res.status(401).json({
@@ -505,7 +536,7 @@ const refreshTokenlai = async (req, res) => {
             const newAccessToken = jwt.sign(
                 payloadNew,
                 process.env.JWT_SECRET,
-                { expiresIn: "7 days" } // expires in 60s
+                { expiresIn: "16 days" } // expires in 60s
 
             )
             //new refresh token

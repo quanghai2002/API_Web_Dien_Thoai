@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { print, outputType } from '../helpers/print.js';
 import Exception from '../exceptions/Exception.js';
 
+
 async function connect() {
     try {
         const connection = await mongoose.connect(process.env.MONGO_URI);
@@ -14,7 +15,9 @@ async function connect() {
         } else if (error.code === 'ENOTFOUND') {
             throw new Exception('Wrong serverName/connection');
         }
+        console.log('kết nối databse thất bại !', error)
         throw new Exception('Cannot connect Mongodb - MonggoExpress');
+
     }
 }
 

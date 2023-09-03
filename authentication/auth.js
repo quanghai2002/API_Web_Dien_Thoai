@@ -11,8 +11,10 @@ const checkToken = (req, res, next) => {
     if (req?.url?.toLowerCase().trim() === '/api/users/login'
         || req?.url?.toLowerCase().trim() === '/api/users/register'
         || req?.url?.toLowerCase().trim() === '/api/users/forget_password'
+        || req?.url?.trim() === '/api/users/refreshToken'
         || req?.url?.toLowerCase().trim() === '/api/users/logingoogle'
         || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?token=`)
+        || req?.url?.toLowerCase().trim().includes(`/api/users/reset_password?tokens=`)
         || req?.url?.toLowerCase().trim().includes(`/api/users/loginphonenumber`)
 
     ) {
@@ -39,7 +41,7 @@ const checkToken = (req, res, next) => {
         } catch (error) {
             print(error, outputType.ERROR);
             res.status(500).json({
-                message: 'token is nhập sai token',
+                message: 'token is nhập sai token, đã hết hạn token',
             });
         }
 

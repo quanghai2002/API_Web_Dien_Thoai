@@ -5,12 +5,14 @@ const ObjectId = Schema.ObjectId;
 
 const User = mongoose.model('User',
     new Schema({
-        id: {
-            type: ObjectId,
+        //_id: tự động tạo
+
+        username: {
+            type: String,
+            required: true,
 
         },
-
-        name: {
+        password: {
             type: String,
             required: true,
 
@@ -27,21 +29,18 @@ const User = mongoose.model('User',
                 messages: "email is correct format"
             },
         },
-        password: {
-            type: String,
-            required: true,
 
-        },
         phoneNumber: {
             type: String,
-
-
         },
+
         address: {
             type: String,
-
-
         },
+
+        orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+        reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
+
         admin: {
             type: Boolean,
             default: false,

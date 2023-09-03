@@ -30,18 +30,20 @@ const login = async (req, res) => {
         let existingUser = await useResponsitorie.login({ email, password }, res)
 
         res.status(200).json({
-            message: 'Login user successfully',
+            message: 'Login user successfully, đăng nhập thành công',
             data: existingUser
         })
 
     } catch (error) {
         console.log(error)
         res.status(404).json({
-            message: 'Login user failed'
+            message: 'Login user failed, login thất bại, thử lại mật khẩu email !'
         })
 
     }
 }
+
+
 
 // LOGIN USER GOOGLE
 const loginGoogle = async (req, res) => {
@@ -54,7 +56,7 @@ const loginGoogle = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(404).json({
-            message: 'Login google failed'
+            message: 'Login google failed, đăng nhập với google thất bại '
         })
 
     }
@@ -72,7 +74,7 @@ const loginPhoneNumber = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(404).json({
-            message: 'Login PhoneNumber failed'
+            message: 'Login PhoneNumber failed, đăng nhập với số điện thoại thất bại !'
         })
 
     }
@@ -97,14 +99,14 @@ const logout = async (req, res) => {
 // register user
 const register = async (req, res) => {
 
-    const { name, email, password, phoneNumber, address } = req.body;
+    const { username, email, password, phoneNumber, address } = req.body;
 
     try {
 
-        let user = await useResponsitorie.register({ name, email, password, phoneNumber, address });
+        let user = await useResponsitorie.register({ username, email, password, phoneNumber, address });
 
         res.status(200).json({
-            message: 'Register user successfully',
+            message: 'Register user successfully, Đăng kí thành công !',
             data: user
         })
 
@@ -119,13 +121,13 @@ const register = async (req, res) => {
 
 
     // Event Emitter
-    myEvent.emit('event.register.user', {
-        name,
-        email,
-        address,
-        password,
-        phoneNumber
-    })
+    // myEvent.emit('event.register.user', {
+    //     name,
+    //     email,
+    //     address,
+    //     password,
+    //     phoneNumber
+    // })
 
 }
 
@@ -191,20 +193,13 @@ const forget_password = async (req, res) => {
 
     try {
 
-        let forwordPassword = await useResponsitorie.forgetPassWord(req, res);
-
-        print('forget password successfully', outputType.SUCCESS);
-        res.status(200).json({
-            data: forwordPassword,
-            message: 'Check email đã gửi để reset password',
-
-        })
+        useResponsitorie.forgetPassWord(req, res);
 
     } catch (error) {
         console.log('error', error);
         print(error, outputType.ERROR);
         res.status(500).json({
-            message: 'forget password failed',
+            message: 'forget password failed,',
 
         })
     }

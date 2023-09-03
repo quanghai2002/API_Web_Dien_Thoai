@@ -33,7 +33,6 @@ router.post('/loginphonenumber', userController.loginPhoneNumber);
 // user register
 router.post('/register', userController.register);
 
-
 // forget password
 router.post('/forget_password', userController.forget_password);
 
@@ -43,10 +42,7 @@ router.get('/reset_password', userController.reset_password);
 // refresh Token => khi access Token => hết hạn
 router.post('/refreshToken', userController.refreshToken)
 
-
-
 // log out
-
 router.post('/logout', checkToken, userController.logout)
 
 // ...
