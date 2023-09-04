@@ -17,6 +17,7 @@ const getAllPhone = async ({ page, size }, res) => {
     let getAllPhone = await Phone.find({})
       .limit(size)
       .skip((page - 1) * size)
+      .populate('category', '-_id -products -createdAt -updatedAt')
       .exec();
 
     // tong so bản ghi của Phone
@@ -55,6 +56,7 @@ const searchPhone = async ({ searchName, page, limit }) => {
   })
     .limit(limit * 1)
     .skip((page - 1) * limit)
+    .populate('category', '-_id -products -createdAt -updatedAt')
     .exec();
 
 
@@ -83,6 +85,7 @@ const sortPhonePrice = async ({ page, size }) => {
     .sort({ price: -1 })  //Sắp xếp giá từ cao đến thấp
     .skip((page - 1) * size)
     .limit(size)
+    .populate('category', '-_id -products -createdAt -updatedAt')
     .exec();
 
   let count = await Phone.countDocuments();
@@ -105,6 +108,7 @@ const sortPhonePrice_Asc = async ({ page, size }) => {
     .sort({ price: 1 })  //Sắp xếp giá Thấp => Cao
     .skip((page - 1) * size)
     .limit(size)
+    .populate('category', '-_id -products -createdAt -updatedAt')
     .exec();
 
   let count = await Phone.countDocuments();
@@ -121,7 +125,7 @@ const sortPhonePrice_Asc = async ({ page, size }) => {
 const getPhoneBuyID = async (phoneId, res) => {
   try {
 
-    const phoneOne = await Phone.findById(phoneId);
+    const phoneOne = await Phone.findById(phoneId).populate('category', '-_id -products -createdAt -updatedAt');
     // nếu tìm thấy sản phẩm theo id => cung cấp return fontend
     if (phoneOne) {
       res.status(200).json({
@@ -152,12 +156,12 @@ const getPhoneBuyID = async (phoneId, res) => {
 
 
 // insert phone
-const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion }, res) => {
+const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand }, res) => {
 
   try {
     print('thêm sản phẩm thành công', outputType.SUCCESS);
 
-    const phone = await Phone.create({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion });
+    const phone = await Phone.create({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand });
 
     res.status(200).json({
       message: 'Thêm sản phẩm thành công',
@@ -275,6 +279,7 @@ const filterPhonePrice = async (req, res) => {
       .sort({ price: 1 })
       .limit(size)
       .skip((page - 1) * size)
+      .populate('category', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -321,6 +326,7 @@ const filterPhoneRAM = async (req, res) => {
       .sort({ price: 1 })
       .limit(size)
       .skip((page - 1) * size)
+      .populate('category', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -368,6 +374,7 @@ const filterPhoneROM = async (req, res) => {
       .sort({ price: 1 })
       .limit(size)
       .skip((page - 1) * size)
+      .populate('category', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -415,6 +422,7 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
       .sort({ price: 1 })
       .limit(size)
       .skip((page - 1) * size)
+      .populate('category', '-_id -products -createdAt -updatedAt')
       .exec();
 
 

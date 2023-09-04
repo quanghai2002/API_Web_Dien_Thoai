@@ -9,6 +9,7 @@ async function connect() {
         print('connect mongodb successfully', outputType.SUCCESS);
         return connection;
     } catch (error) {
+
         if (error.code === 8000) {
             // throw new Error('Wrong database UerName and Password');
             print('Wrong database UerName and Password', outputType.ERROR);
