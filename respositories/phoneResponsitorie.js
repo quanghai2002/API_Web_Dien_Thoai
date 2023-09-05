@@ -18,6 +18,7 @@ const getAllPhone = async ({ page, size }, res) => {
       .limit(size)
       .skip((page - 1) * size)
       .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
       .exec();
 
     // tong so bản ghi của Phone
@@ -57,6 +58,7 @@ const searchPhone = async ({ searchName, page, limit }) => {
     .limit(limit * 1)
     .skip((page - 1) * limit)
     .populate('category', '-_id -products -createdAt -updatedAt')
+    .populate('brand', '-_id -products -createdAt -updatedAt')
     .exec();
 
 
@@ -86,6 +88,7 @@ const sortPhonePrice = async ({ page, size }) => {
     .skip((page - 1) * size)
     .limit(size)
     .populate('category', '-_id -products -createdAt -updatedAt')
+    .populate('brand', '-_id -products -createdAt -updatedAt')
     .exec();
 
   let count = await Phone.countDocuments();
@@ -109,6 +112,7 @@ const sortPhonePrice_Asc = async ({ page, size }) => {
     .skip((page - 1) * size)
     .limit(size)
     .populate('category', '-_id -products -createdAt -updatedAt')
+    .populate('brand', '-_id -products -createdAt -updatedAt')
     .exec();
 
   let count = await Phone.countDocuments();
@@ -125,7 +129,9 @@ const sortPhonePrice_Asc = async ({ page, size }) => {
 const getPhoneBuyID = async (phoneId, res) => {
   try {
 
-    const phoneOne = await Phone.findById(phoneId).populate('category', '-_id -products -createdAt -updatedAt');
+    const phoneOne = await Phone.findById(phoneId)
+      .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt');
     // nếu tìm thấy sản phẩm theo id => cung cấp return fontend
     if (phoneOne) {
       res.status(200).json({
@@ -280,6 +286,7 @@ const filterPhonePrice = async (req, res) => {
       .limit(size)
       .skip((page - 1) * size)
       .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -327,6 +334,7 @@ const filterPhoneRAM = async (req, res) => {
       .limit(size)
       .skip((page - 1) * size)
       .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -375,6 +383,7 @@ const filterPhoneROM = async (req, res) => {
       .limit(size)
       .skip((page - 1) * size)
       .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
       .exec();
 
 
@@ -423,6 +432,7 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
       .limit(size)
       .skip((page - 1) * size)
       .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
       .exec();
 
 

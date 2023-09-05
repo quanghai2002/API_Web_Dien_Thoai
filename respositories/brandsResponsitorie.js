@@ -16,7 +16,6 @@ const insertBrands = async ({ name, description, logo_url, products }, res) => {
     const isNameBrand = await brandSchema.findOne({ name: name });
 
 
-
     // nếu tồn tại thương hiệu => thì update lại thương hiệu => bằng data req gửi lên
     if (!!isNameBrand) {
       print('Thương hiệu sản phẩm đã tồn tại, Cập nhật danh sách sản phẩm bên trong thành công', outputType.SUCCESS);
@@ -56,20 +55,22 @@ const insertBrands = async ({ name, description, logo_url, products }, res) => {
 };
 
 
-// get danh mục sản phẩm => lấy các sản phẩm bên trong đó
-const getProductCategory = async ({ name }, req, res) => {
+
+// get danh mục sản phẩm => lấy các sản phẩm bên trong 1 thương hiệu sản phẩm đó
+const getProductBrands = async ({ name }, req, res) => {
+
+  console.log({ name });
 
   const page = parseInt(req.query.page) || 1; // Page number, default to 1
   const size = parseInt(req.query.size) || 3
 
   try {
-    print('GET sản phẩm trong danh mục sản phẩm thành công', outputType.SUCCESS);
+    print('GET sản phẩm trong Thương hiệu  thành công', outputType.SUCCESS);
 
-    const category = await ProductCategorySchema.findOne({ name })
+    const category = await brandSchema.findOne({ name })
 
       //  .limit(size)
       // .skip((page - 1) * size)
-
       .populate({
         path: 'products',
         // match: { age: { $gte: 21 } },
@@ -80,8 +81,8 @@ const getProductCategory = async ({ name }, req, res) => {
         }
       })
       .exec();
-    // tổng số bản ghi liên quan đến products
-    const countSumProducts = await ProductCategorySchema.findOne({ name })
+    // tổng số bản ghi liên quan đến products => đó trong Danh mục sản phẩm
+    const countSumProducts = await brandSchema.findOne({ name })
       .populate({
         path: 'products',
 
@@ -89,7 +90,8 @@ const getProductCategory = async ({ name }, req, res) => {
       .exec();
 
     res.status(200).json({
-      message: 'GET sản phẩm trong danh mục sản phẩm thành công',
+      message: 'GET sản phẩm trong THƯƠNG HIỆU => thành công',
+      brand: name,
       currentPage: page,
       size,
       totalPages: Math.ceil(countSumProducts?.products.length / size),
@@ -102,7 +104,7 @@ const getProductCategory = async ({ name }, req, res) => {
     print(error, outputType.ERROR)
     // error from validation
     res.status(500).json({
-      message: ` không GET được DANH MỤC SẢN PHẨM sản phẩm, vui lòng thử lại! `,
+      message: ` không GET được THƯƠNG HIỆU sản phẩm, vui lòng thử lại! `,
     })
 
   }
@@ -114,4 +116,4 @@ const getProductCategory = async ({ name }, req, res) => {
 
 
 
-export default { insertBrands, getProductCategory }
+export default { insertBrands, getProductBrands }

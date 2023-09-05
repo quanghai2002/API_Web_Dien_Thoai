@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'; // must have
 // authentication middleware
 // eslint-disable-next-line import/extensions
 import checkToken from './authentication/auth.js';
-import { userRoute, phoneRoute, productCategory, brands } from './routes/index.js';
+import { userRoute, phoneRoute, productCategory, brands, order } from './routes/index.js';
 // import { userRoute, studentsRoute } from './routes/index.js';
 import connect from './database/database.js';
 // const cors = require("cors");
@@ -43,8 +43,12 @@ app.use('/api/phone', phoneRoute);
 // danh mục sản phẩm
 app.use('/api/category', productCategory);
 
-// thương hiệu sản phẩm
+// thương hiệu sản phẩm brands
 app.use('/api/brands', brands);
+
+// đơn hàng của user
+app.use('/api/order', order);
+
 
 app.get('/', (req, res) => {
     res.send('responsr from root route kk');

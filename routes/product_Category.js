@@ -12,6 +12,9 @@ router.post('/insert', productCategory.insertProductCategory);
 // get danh mục sản phẩm => và lấy thông tin các sản phẩm bên trong đó
 router.post('/getCategory', productCategory.getProductCategory);
 
+
+
+
 //...
 export default router;
 

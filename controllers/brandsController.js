@@ -1,5 +1,3 @@
-
-// import { studentResponsitorie } from "../respositories/index.js";
 import { brandsResponsitoti } from "../respositories/index.js";
 import { MAX_RECORDS } from '../Global/constants.js';
 import { print, outputType } from "../helpers/print.js";
@@ -21,19 +19,20 @@ const insertBrands = async (req, res) => {
 
 
 
-// get danh mục sản phẩm => lấy các sản phẩm bên trong thuwowg hiệu sản phẩm đó
-const getProductCategory = async (req, res) => {
+
+// get danh mục sản phẩm => lấy các sản phẩm bên trong thương hiệu => sản phẩm đó
+const getProductBrands = async (req, res) => {
   try {
-    await productCategory.getProductCategory(req?.body, req, res);
+    await brandsResponsitoti.getProductBrands(req?.body, req, res);
 
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: `GET danh mục sản phẩm thất bại !, Vui lòng thử lại`,
+      message: `GET THƯƠNG HIỆU sản phẩm thất bại !, Vui lòng thử lại`,
     })
   }
-
 }
+
 
 // export default {
 //   getAllStudents,
@@ -46,8 +45,11 @@ const getProductCategory = async (req, res) => {
 //   generateFakeStudent // có thể xóa => fake data
 // }
 
+
+
+
 export default {
   insertBrands,
-  getProductCategory
+  getProductBrands
 }
 
