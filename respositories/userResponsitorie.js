@@ -203,8 +203,10 @@ const loginGoogle = async (req, res) => {
                 const { email_verified, name, email, picture, exp } = response?.payload;
 
 
+
                 if (email_verified) {
                     const userGoogle = await User.findOne({ email: email }).exec();
+
 
 
                     if (userGoogle) {
@@ -212,6 +214,10 @@ const loginGoogle = async (req, res) => {
                         const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
                         // get info => user => db
                         const { _id, username, email, admin, orders, reviews, phoneNumber } = userGoogle;
+
+                        userGoogle.img_url = picture ?? userGoogle.img_url;
+                        await userGoogle.save();
+
 
                         // res => return Fontend
                         print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
@@ -243,7 +249,8 @@ const loginGoogle = async (req, res) => {
                             email,
                             password,
                             address: "Account-Login-With-Google",
-                            admin: false
+                            admin: false,
+                            img_url: picture
                             // picture,
                             // exp,
                             // iat
@@ -253,13 +260,13 @@ const loginGoogle = async (req, res) => {
                         const newUserGoogle = await newUser.save();
                         if (newUserGoogle) {
                             const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
-                            const { _id, username, email, admin } = newUserGoogle;
+                            const { _id, username, email, admin, img_url } = newUserGoogle;
                             print('Đăng nhập GOOGLE ACCOUNT => thành công', outputType.SUCCESS);
                             res.status(200).json({
                                 message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
                                 token,
                                 user: {
-                                    _id, username, email, admin
+                                    _id, username, email, admin, img_url
                                     //  picture, exp, iat
                                 },
                                 exp
@@ -576,4 +583,57 @@ const refreshTokenlai = async (req, res) => {
 
 }
 
-export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber }
+
+// get 1 user
+const getOneUser = async (req, res) => {
+    let id = req?.params?.id;
+    console.log({ id });
+    try {
+        const useGetOne = await User.findById(id);
+
+        print("Lấy 1 USER theo ID thành công", outputType.SUCCESS)
+        res.status(200).json({
+            message: 'Lấy 1 USER theo ID thành công !',
+            data: useGetOne
+        });
+
+    } catch (error) {
+        print("Lấy 1 USER theo ID thất bại", outputType.ERROR);
+        console.log({ error });
+        res.status(500).json({
+            message: 'Lấy 1 USER theo ID thất bại ! nhập đúng ID user',
+        });
+    }
+}
+
+// UPDATE user
+const updateUser = async (req, res) => {
+
+    const { _id, username, img_url } = req?.body;
+    console.log({ _id });
+    console.log({ username });
+    console.log({ img_url });
+
+    try {
+        const userUpdate = await User.findById(_id);
+
+        userUpdate.username = username ?? userUpdate.username;
+        userUpdate.img_url = img_url ?? userUpdate.img_url;
+
+        await userUpdate.save();
+
+        print("Cập nhật User thành công", outputType.SUCCESS)
+        res.status(200).json({
+            message: 'Cập nhật user thành công !',
+            data: userUpdate
+        });
+
+    } catch (error) {
+        print("Cập nhật User thất bại", outputType.ERROR);
+        console.log({ error });
+        res.status(500).json({
+            message: 'Cập nhật Userthất bại ! nhập đúng ID user',
+        });
+    }
+}
+export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber, getOneUser, updateUser }

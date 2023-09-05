@@ -7,11 +7,10 @@ import { reviewSchema } from '../models/index.js';
 
 
 
-// insert thương hiệu sản phẩm
+// insert review
 const insertReview = async ({ rating, comment, timestamp, user, product }, res) => {
 
   try {
-
 
     print('thêm MỚI =>  Review thành công', outputType.SUCCESS);
 
@@ -37,59 +36,64 @@ const insertReview = async ({ rating, comment, timestamp, user, product }, res) 
 };
 
 
+// update review
+const updateReview = async ({ _id, rating, comment, timestamp, user, product }, res) => {
+  try {
+    const review = await reviewSchema.findById(_id);
+    const timestamp = Date.now();
 
-// get danh mục sản phẩm => lấy các sản phẩm bên trong 1 thương hiệu sản phẩm đó
-// const getProductBrands = async ({ name }, req, res) => {
-
-//   console.log({ name });
-
-//   const page = parseInt(req.query.page) || 1; // Page number, default to 1
-//   const size = parseInt(req.query.size) || 3
-
-//   try {
-//     print('GET sản phẩm trong Thương hiệu  thành công', outputType.SUCCESS);
-
-//     const category = await brandSchema.findOne({ name })
-
-//       //  .limit(size)
-//       // .skip((page - 1) * size)
-//       .populate({
-//         path: 'products',
-//         // match: { age: { $gte: 21 } },
-//         // select: 'name -_id',
-//         options: {
-//           skip: (page - 1) * size,
-//           limit: size,
-//         }
-//       })
-//       .exec();
-//     // tổng số bản ghi liên quan đến products => đó trong Danh mục sản phẩm
-//     const countSumProducts = await brandSchema.findOne({ name })
-//       .populate({
-//         path: 'products',
-
-//       })
-//       .exec();
-
-//     res.status(200).json({
-//       message: 'GET sản phẩm trong THƯƠNG HIỆU => thành công',
-//       brand: name,
-//       currentPage: page,
-//       size,
-//       totalPages: Math.ceil(countSumProducts?.products.length / size),
-//       "page/pages": `${page}/${Math.ceil(countSumProducts?.products.length / size)}`, // trang hiện tại /trên tổng số trang
-//       data: category,
-//     })
+    review.rating = rating ?? review.rating; // ?? null,undefined lay gia tri thu 2
+    review.comment = comment ?? review.comment; // ?? null,undefined lay gia tri thu 2
+    review.timestamp = timestamp ?? review.timestamp; // ?? null,undefined lay gia tri thu 2
+    review.user = user ?? review.user; // ?? null,undefined lay gia tri thu 2
+    review.product = product ?? review.product; // ?? null,undefined lay gia tri thu 2
 
 
-//   } catch (error) {
-//     print(error, outputType.ERROR)
-//     // error from validation
-//     res.status(500).json({
-//       message: ` không GET được THƯƠNG HIỆU sản phẩm, vui lòng thử lại! `,
-//     })
+    await review.save();
 
-//   }
-// }
+    print('Cập nhật REVIEW thành công', outputType.SUCCESS);
+    res.status(200).json({
+      message: 'Cập nhật REVIEW thành công',
+      data: review,
+    })
 
-export default { insertReview }
+  }
+  catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: ` cập nhật REVIEW thất bại, thử lại id `,
+    })
+
+  }
+}
+
+
+// delete 1 review
+const deleteReview = async (req, res) => {
+  const reviewId = req.params?.idDelete;
+
+  console.log({ reviewId });
+  try {
+    const countDeleteReview = await reviewSchema.findByIdAndDelete(reviewId);
+
+    print('DELETE REVIEW thành công', outputType.SUCCESS);
+    res.status(200).json({
+      message: 'DELETE REVIEW thành công',
+      countDeleteReview,
+    })
+
+  }
+  catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: ` DELETE REVIEW thất bại, thử lại id `,
+    })
+
+  }
+}
+
+
+
+export default { insertReview, updateReview, deleteReview }

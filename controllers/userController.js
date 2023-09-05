@@ -252,7 +252,34 @@ const refreshToken = async (req, res) => {
 }
 
 
+// GET ONE user
+const getOneUser = async (req, res) => {
 
-export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle, loginPhoneNumber }
+    try {
+        await useResponsitorie.getOneUser(req, res);
+
+    } catch (error) {
+        print(error, outputType.ERROR);
+        res.status(500).json({
+            message: 'GET ONE User thất bại !',
+        })
+    }
+}
+
+// Update user
+const updateUser = async (req, res) => {
+
+    try {
+        await useResponsitorie.updateUser(req, res);
+
+    } catch (error) {
+        print(error, outputType.ERROR);
+        res.status(500).json({
+            message: 'Cập nhật USER thất bại !',
+        })
+    }
+}
+
+export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle, loginPhoneNumber, getOneUser, updateUser }
 
 

@@ -11,8 +11,8 @@ const getAllPhone = async ({ page, size }, res) => {
 
   size = Number.parseInt(size);
   page = Number.parseInt(page);
-  try {
 
+  try {
     // lấy ra số bản ghi theo yêu cầu and pagination
     let getAllPhone = await Phone.find({})
       .limit(size)
@@ -74,8 +74,6 @@ const searchPhone = async ({ searchName, page, limit }) => {
   return { resultSearch, count }
 };
 
-
-
 // sortPhone => theo giá sản phẩm => CAO => THẤP
 const sortPhonePrice = async ({ page, size }) => {
   // aggreate data for all . get data students
@@ -126,16 +124,58 @@ const sortPhonePrice_Asc = async ({ page, size }) => {
 
 
 // get 1 sản phẩm theo  ID
-const getPhoneBuyID = async (phoneId, res) => {
+const getPhoneBuyID = async (phoneId, req, res) => {
+
+  const page = parseInt(req.query.page) || 1; // Page number, default to 1
+  const size = parseInt(req.query.size) || 3;
+
+  console.log({ page })
+  console.log({ size })
+
   try {
 
     const phoneOne = await Phone.findById(phoneId)
       .populate('category', '-_id -products -createdAt -updatedAt')
-      .populate('brand', '-_id -products -createdAt -updatedAt');
+      .populate('brand', '-_id -products -createdAt -updatedAt')
+      .populate({
+        path: 'reviews',
+        // match: { age: { $gte: 21 } },
+        // select: 'name -_id',
+        options: {
+          skip: (page - 1) * size,
+          limit: size,
+        },
+        populate: {
+          path: 'user',
+          model: 'User',
+          select: 'username',
+        }
+      })
+      .exec();
+
+    // tổng số bản ghi liên quan đến Review => lấy tất cả bản ghi
+    const countSumReview = await Phone.findById(phoneId)
+      .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'user',
+          model: 'User',
+          select: 'username',
+
+        }
+      })
+      .exec();
+
     // nếu tìm thấy sản phẩm theo id => cung cấp return fontend
     if (phoneOne) {
       res.status(200).json({
         message: 'Lấy 1 sản phẩm theo ID thành công !',
+        currentPageReview: page,
+        size,
+        totalPagesReview: Math.ceil(countSumReview?.reviews?.length / size),
+        "page/pages": `${page}/${Math.ceil(countSumReview?.reviews?.length / size)}`, // trang hiện tại /trên tổng số trang
         data: phoneOne
       });
 
@@ -162,12 +202,12 @@ const getPhoneBuyID = async (phoneId, res) => {
 
 
 // insert phone
-const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand }, res) => {
+const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews }, res) => {
 
   try {
     print('thêm sản phẩm thành công', outputType.SUCCESS);
 
-    const phone = await Phone.create({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand });
+    const phone = await Phone.create({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews });
 
     res.status(200).json({
       message: 'Thêm sản phẩm thành công',
@@ -482,6 +522,6 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 
 
 
-// export default { getAllStudents, insertStudents, generateFakeStudent, getStudentBuyID, updateStudent, deleteStudent, sortStudent, searchStudent }
+
 
 export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh }

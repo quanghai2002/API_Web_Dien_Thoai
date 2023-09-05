@@ -5,7 +5,7 @@ const ObjectId = Schema.ObjectId;
 
 const User = mongoose.model('User',
     new Schema({
-        //_id: tự động tạo
+
 
         username: {
             type: String,
@@ -34,6 +34,10 @@ const User = mongoose.model('User',
         },
 
         address: {
+            type: String,
+        },
+
+        img_url: {
             type: String,
         },
 

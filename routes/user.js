@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 // get all users
-router.get('/', userController.getAllUser);
+router.get('/', verifyTokenAndAdmin, userController.getAllUser);
 
 // delete users => admin Authorization
 router.delete('/delete/:id', verifyTokenAndAdmin, userController.deleteUser);
@@ -45,5 +45,10 @@ router.post('/refreshToken', userController.refreshToken)
 // log out
 router.post('/logout', checkToken, userController.logout)
 
+// get ONE users
+router.get('/getoneuser/:id', userController.getOneUser);
+
+// update user
+router.patch('/updateuser', userController.updateUser);
 // ...
 export default router;

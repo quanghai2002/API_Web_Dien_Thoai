@@ -160,7 +160,7 @@ const getPhoneBuyID = async (req, res) => {
 
 
   try {
-    await phoneResponsitorie.getPhoneBuyID(phoneId, res);
+    await phoneResponsitorie.getPhoneBuyID(phoneId, req, res);
 
   } catch (error) {
     res.status(500).json({
