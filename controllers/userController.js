@@ -27,12 +27,7 @@ const login = async (req, res) => {
 
     try {
         //call repository
-        let existingUser = await useResponsitorie.login({ email, password }, res)
-
-        res.status(200).json({
-            message: 'Login user successfully, đăng nhập thành công',
-            data: existingUser
-        })
+        await useResponsitorie.login({ email, password }, res)
 
     } catch (error) {
         console.log(error)

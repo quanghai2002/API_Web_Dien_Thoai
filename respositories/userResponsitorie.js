@@ -116,10 +116,14 @@ const login = async ({ email, password }, res) => {
                 sameTime: "strict"
             })
 
-            return {
-                ...notShowPassword,
+            res.status(200).json({
+                message: 'Đăng nhập thành công!',
                 token: accessToken,
-            }
+                data: {
+                    ...notShowPassword,
+                }
+            })
+
         }
         // nếu sai password
         else {
@@ -444,7 +448,11 @@ const forgetPassWord = async (req, res) => {
             }
         })
         sendResetPasswordMail(userData.username, userData.email, randomString, req, res);
-        return data
+        res.status(200).json({
+            message: 'Cập nhật token trong user thành công',
+            data
+
+        })
 
     }
     else {
