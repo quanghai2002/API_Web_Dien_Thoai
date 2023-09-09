@@ -8,7 +8,7 @@ import nodemailer from 'nodemailer';
 import randomstring from 'randomstring';
 import asyncHandler from "express-async-handler";
 import { OAuth2Client } from 'google-auth-library';
-
+import Cookies from 'universal-cookie';
 
 
 // reset password
@@ -65,7 +65,7 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token, req, res) 
 let refreshTokenMoi = [];
 
 // user login
-const login = async ({ email, password }, res) => {
+const login = async ({ email, password }, res, req) => {
 
     // check user and email => database => đã tồn tại hay chưa
     // findOne db => User
@@ -89,9 +89,9 @@ const login = async ({ email, password }, res) => {
                     admin: existingUser.admin,
                 },
                 process.env.JWT_SECRET,
-                // { expiresIn: 60 } // expires in 60s
-                { expiresIn: "16 days" } // expires in 10 day => ke tu khi login
-                // { expiresIn: "1h" } // expires in 10 day => ke tu khi login
+                { expiresIn: 60 } // expires in 60s
+                // { expiresIn: "16 days" } // expires in 16 day => ke tu khi login
+                // { expiresIn: "1h" } // expires in 1h => ke tu khi login
 
             );
 
@@ -113,12 +113,18 @@ const login = async ({ email, password }, res) => {
                 httpOnly: true,
                 secure: false,
                 path: "/",
-                sameTime: "strict"
+                // sameSite: "strict"
+                sameSite: "Lax"
             })
+
+            // lưu refreshToken => vào cookie
+            // const cookies = new Cookies();
+            // cookies.set('refreshToken', refreshToken, { path: '/' });
 
             res.status(200).json({
                 message: 'Đăng nhập thành công!',
                 token: accessToken,
+                refreshToken,
                 data: {
                     ...notShowPassword,
                 }
@@ -507,7 +513,7 @@ const refreshTokenlai = async (req, res) => {
     // lấy refreshToken => từ user => user =>refreshToken lấy cookies
     try {
         // take refresh token => user
-        let refresTokenOld = await req.headers.cookie.split('=')[1];
+        let refresTokenOld = await req.body?.refreshToken;
 
         console.log({ refresTokenOld })
 
@@ -574,7 +580,8 @@ const refreshTokenlai = async (req, res) => {
 
             res.status(200).json({
                 message: 'refreshToken successfully',
-                newAccessToken
+                newAccessToken,
+                newRefreshToken
             })
         })
 

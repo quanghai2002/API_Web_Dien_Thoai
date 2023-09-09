@@ -27,7 +27,7 @@ const login = async (req, res) => {
 
     try {
         //call repository
-        await useResponsitorie.login({ email, password }, res)
+        await useResponsitorie.login({ email, password }, res, req)
 
     } catch (error) {
         console.log(error)
