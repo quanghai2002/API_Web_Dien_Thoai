@@ -30,6 +30,25 @@ const getAllPhone = async (req, res) => {
 
 }
 
+// get all Phone ko phân trang => lấy tất cả sản phẩm
+const getAllPhoneNoPagination = async (req, res) => {
+  // pagination  => phân trang
+  //http://.../phone?page=1&size=60
+
+  try {
+
+    await phoneResponsitorie.getAllPhoneNoPagination(req, res)
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'wrong all không có phân trang => thất bại => students failed !',
+    })
+    print(error, outputType.ERROR);
+
+  }
+
+}
+
 
 // search Phone => tìm kiếm sản phẩm => theo tên sản phẩm
 const searchPhone = async (req, res) => {
@@ -318,6 +337,7 @@ export default {
   deleteManyPhone,
   getPhoneBuyID,
   getAllPhone,
+  getAllPhoneNoPagination,
   searchPhone,
   sortPhonePrice,
   sortPhonePrice_Asc,

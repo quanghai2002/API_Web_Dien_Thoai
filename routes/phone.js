@@ -32,12 +32,13 @@ router.delete('/delete/:idDelete', verifyTokenAndAdmin, phoneController.deletePh
 // delete nhiều => product buy danh sách ID
 router.delete('/deletemany', verifyTokenAndAdmin, phoneController.deleteManyPhone);
 
-// get 1 sản phẩm theo id 
-router.get('/:id', phoneController.getPhoneBuyID);
+
 
 // get all sản phẩm and pagination
 router.get('/', phoneController.getAllPhone);
 
+// get all sản phẩm +> KHÔNG CÓ PAGINATION
+router.get('/getallphonenopagination', phoneController.getAllPhoneNoPagination);
 
 // lấy sản phẩm trong khoảng GIÁ cụ thể
 router.post('/getPhone_Price_KhoangAB', phoneController.getPhonePrice_KhoangAB);
@@ -50,6 +51,9 @@ router.post('/getPhone_ROM', phoneController.getPhoneROM);
 
 // lấy sản phẩm trong khoảng kích thước MÀN HÌNH nào đó
 router.post('/getPhone_KichThuocManHinh', phoneController.getPhoneKichThuocManHinh);
+
+// get 1 sản phẩm theo id 
+router.get('/:id', phoneController.getPhoneBuyID);
 
 //...
 export default router;

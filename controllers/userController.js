@@ -126,7 +126,7 @@ const register = async (req, res) => {
 
 }
 
-// get all user
+// get all user and panination
 const getAllUser = async (req, res) => {
 
     // pagination  => phân trang

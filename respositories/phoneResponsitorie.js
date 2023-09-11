@@ -6,7 +6,7 @@ import { Phone } from '../models/index.js';
 import { faker } from '@faker-js/faker/locale/vi';
 
 
-// get all phone and pagination
+// get all phone and có pagination
 const getAllPhone = async ({ page, size }, res) => {
 
   size = Number.parseInt(size);
@@ -37,6 +37,31 @@ const getAllPhone = async ({ page, size }, res) => {
   } catch (error) {
     res.status(500).json({
       message: 'get All phone thất bại',
+    })
+    print(error, outputType.ERROR);
+  }
+
+
+};
+
+// get all phone KHÔNG Có pagination
+const getAllPhoneNoPagination = async (req, res) => {
+
+  try {
+    // lấy tất cả sản phẩm => mui phân trang kk
+    let getAllPhoneNoPaginaiton = await Phone.find()
+      .populate('category', '-_id -products -createdAt -updatedAt')
+      .populate('brand', '-_id -products -createdAt -updatedAt')
+      .exec();
+
+    res.status(200).json({
+      message: 'Get all PHONE => KHÔNG Có Pagination => successfully',
+      data: getAllPhoneNoPaginaiton
+    })
+    print('Get all PHONE => Không có Pagonation => successfully', outputType.SUCCESS);
+  } catch (error) {
+    res.status(500).json({
+      message: 'get All phone => Không có phân trang => thất bại',
     })
     print(error, outputType.ERROR);
   }
@@ -524,4 +549,4 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 
 
 
-export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh }
+export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh }
