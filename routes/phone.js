@@ -30,9 +30,7 @@ router.delete('/delete/:idDelete', verifyTokenAndAdmin, phoneController.deletePh
 
 
 // delete nhiều => product buy danh sách ID
-router.delete('/deletemany', verifyTokenAndAdmin, phoneController.deleteManyPhone);
-
-
+router.post('/deletemany/deletemanyphone', verifyTokenAndAdmin, phoneController.deleteManyPhone);
 
 // get all sản phẩm and pagination
 router.get('/', phoneController.getAllPhone);
