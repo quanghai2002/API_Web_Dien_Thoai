@@ -525,28 +525,36 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 
 }
 
-// generate fake  => 1000 students => fake
-// async function generateFakeStudent() {
-//   [...Array(100).keys()].forEach(async (items) => {
 
-//     let fakeStudents = {
-//       name: faker.person.fullName(),
-//       email: faker.internet.email(),
-//       languages: faker.helpers.arrayElement(['Vietnamese', 'English', 'China', 'Nga']),
-//       gender: faker.helpers.arrayElement(["Nam", "Nữ"]),
-//       phoneNumber: faker.phone.number(),
-//       address: faker.location.cityName(),
-
-//     }
-//     await Student.create(fakeStudents);
-//     print(`Insert student name fake:${fakeStudents.name} - ${fakeStudents.phoneNumber}`);
-
-//   })
-
-// }
+const saveUrlImagePhone = async (req, res) => {
+  try {
 
 
+    // Xử lý tải lên nhiều ảnh
+    // Xử lý tải lên tệp ảnh và lưu chúng vào thư mục lưu trữ
+    const uploadedImages = req.files.map((file) => {
+      const imageUrl = `/uploads/${file.filename}`;
+      return imageUrl;
+    });
+
+    console.log({ uploadedImages });
+    res.status(200).json({
+      message: 'lưu url hình ảnh thành công',
+      data: uploadedImages
+
+    });
+
+    print('lưu url hình ảnh thành công', outputType.SUCCESS);
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'lưu url hình ảnh thất bại !',
+    })
+    print(error, outputType.ERROR);
+  }
+
+}
 
 
 
-export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh }
+export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh, saveUrlImagePhone }

@@ -308,14 +308,19 @@ const getPhoneKichThuocManHinh = async (req, res) => {
   }
 }
 
-//generateFakeStudent -> fake data
-// const generateFakeStudent = async (req, res) => {
-//   await studentResponsitorie.generateFakeStudent(req.body);
-//   res.status(200).json({
-//     message: 'fake data => students successfully',
-//   })
+// lưu ảnh và trả về url hình ảnh
+const saveUrlImagePhone = async (req, res) => {
 
-// }
+  try {
+    await phoneResponsitorie.saveUrlImagePhone(req, res);
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Lưu url hình ảnh thất bại',
+    })
+    print(error, outputType.ERROR);
+  }
+}
 
 
 // export default {
@@ -344,7 +349,8 @@ export default {
   getPhonePrice_KhoangAB,
   getPhoneRAM,
   getPhoneROM,
-  getPhoneKichThuocManHinh
+  getPhoneKichThuocManHinh,
+  saveUrlImagePhone
 
 
   // generateFakeStudent // có thể xóa => fake data

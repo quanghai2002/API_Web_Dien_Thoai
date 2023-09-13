@@ -1,5 +1,6 @@
 
 import express from 'express';
+import upload from '../untils.js';
 // import { studentsController } from '../controllers/index.js';
 import { phoneController } from '../controllers/index.js';
 import { verifyTokenAndAdmin } from '../authentication/auth.js';
@@ -47,12 +48,17 @@ router.post('/getPhone_RAM', phoneController.getPhoneRAM);
 // lấy sản phẩm có ROM bằng bao nhiêu đó
 router.post('/getPhone_ROM', phoneController.getPhoneROM);
 
-// lấy sản phẩm trong khoảng kích thước MÀN HÌNH nào đó
-router.post('/getPhone_KichThuocManHinh', phoneController.getPhoneKichThuocManHinh);
+
 
 // get 1 sản phẩm theo id 
 router.get('/:id', phoneController.getPhoneBuyID);
 
+// lưu hình ảnh và trả về URL của hình ảnh cho react
+router.post('/uploadurl/url', verifyTokenAndAdmin, upload.array('image_urls', 10), phoneController.saveUrlImagePhone);
+
+
+// lấy sản phẩm trong khoảng kích thước MÀN HÌNH nào đó
+router.post('/getPhone_KichThuocManHinh', phoneController.getPhoneKichThuocManHinh);
 //...
 export default router;
 

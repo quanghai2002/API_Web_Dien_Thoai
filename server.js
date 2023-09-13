@@ -8,7 +8,12 @@ import { userRoute, phoneRoute, productCategory, brands, order, review } from '.
 import connect from './database/database.js';
 // const cors = require("cors");
 import cors from "cors";
+// lưu url hình ảnh
+import path from 'path';
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = path.dirname(__filename);
 
+//
 dotenv.config();
 const app = express();
 
@@ -56,6 +61,9 @@ app.get('/', (req, res) => {
     res.send('responsr from root route kk');
 });
 
+// truy cập link ảnh => sau khi đã lưu
+// Điều này cho phép bạn truy cập các tệp ảnh từ URL có định dạng như sau: http://yourdomain.com/uploads/ten-tep-anh.jpg.
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 
 const post = process.env.POST || 8081;
 
