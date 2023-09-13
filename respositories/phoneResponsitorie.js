@@ -533,8 +533,6 @@ const saveUrlImagePhone = async (req, res) => {
 
     const post = process.env.POST || 8081;
 
-
-
     // console.log('req.files', req.files)
     // Xử lý tải lên nhiều ảnh
     // Xử lý tải lên tệp ảnh và lưu chúng vào thư mục lưu trữ
