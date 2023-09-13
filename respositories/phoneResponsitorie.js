@@ -6,6 +6,7 @@ import { Phone } from '../models/index.js';
 import { faker } from '@faker-js/faker/locale/vi';
 import os from 'os';
 
+
 // get all phone and có pagination
 const getAllPhone = async ({ page, size }, res) => {
 
@@ -526,10 +527,15 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 }
 
 
+
 const saveUrlImagePhone = async (req, res) => {
   try {
 
     const post = process.env.POST || 8081;
+
+
+
+    // console.log('req.files', req.files)
     // Xử lý tải lên nhiều ảnh
     // Xử lý tải lên tệp ảnh và lưu chúng vào thư mục lưu trữ
     const uploadedImages = req.files.map((file) => {
