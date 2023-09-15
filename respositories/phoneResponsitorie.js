@@ -536,6 +536,7 @@ const saveUrlImagePhone = async (req, res) => {
     // console.log('req.files', req.files)
     // Xử lý tải lên nhiều ảnh
     // Xử lý tải lên tệp ảnh và lưu chúng vào thư mục lưu trữ
+    console.log('fileUpload:', req.files)
     const uploadedImages = req.files.map((file) => {
       // const imageUrl = `/uploads/${file.filename}`;
       // const imageUrl = `http://${os.hostname()}:${post}/uploads/${file.filename}`;

@@ -10,6 +10,7 @@ import asyncHandler from "express-async-handler";
 import { OAuth2Client } from 'google-auth-library';
 import Cookies from 'universal-cookie';
 
+let refreshTokenMoi = [];
 
 // reset password
 const sendResetPasswordMail = asyncHandler(async (name, email, token, req, res) => {
@@ -62,7 +63,7 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token, req, res) 
 
 )
 
-let refreshTokenMoi = [];
+
 
 // user login
 const login = async ({ email, password }, res, req) => {
@@ -89,7 +90,7 @@ const login = async ({ email, password }, res, req) => {
                     admin: existingUser.admin,
                 },
                 process.env.JWT_SECRET,
-                { expiresIn: 60 } // expires in 60s
+                { expiresIn: 30 } // expires in 60s
                 // { expiresIn: "16 days" } // expires in 16 day => ke tu khi login
                 // { expiresIn: "1h" } // expires in 1h => ke tu khi login
 
@@ -213,20 +214,31 @@ const loginGoogle = async (req, res) => {
                 const { email_verified, name, email, picture, exp } = response?.payload;
 
 
-
                 if (email_verified) {
+                    // tìm email đăng nhập
                     const userGoogle = await User.findOne({ email: email }).exec();
-
-
-
                     if (userGoogle) {
-                        // tìm thấy email => đã REGISTER => trong database
-                        const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                        // ACCESS TOKEN
+                        // tìm thấy email => đã REGISTER => trong database => Accest token    expiresIn: '16d'
+                        const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: 30 });
                         // get info => user => db
                         const { _id, username, email, admin, orders, reviews, phoneNumber } = userGoogle;
 
                         userGoogle.img_url = picture ?? userGoogle.img_url;
                         await userGoogle.save();
+
+                        // TẠO refreshToken  => lâu hết hạn hơn => sẽ được lưu trên cookies
+                        const refreshToken = jwt.sign(
+                            {
+                                _id: userGoogle._id
+                            },
+                            process.env.JWT_SECRET,
+                            // { expiresIn: 60} // expires in 60s
+                            { expiresIn: "365 days" } // expires in 365 day => ke tu khi login
+                        )
+                        // refreshToken => refreshTokenMoi
+                        refreshTokenMoi.push(refreshToken);
+
 
 
                         // res => return Fontend
@@ -234,7 +246,8 @@ const loginGoogle = async (req, res) => {
                         res.status(200).json({
                             message: 'Login with GOOGLE => thành công',
                             token,
-                            user: {
+                            refreshToken,
+                            data: {
                                 _id,
                                 username,
                                 email,
@@ -269,13 +282,28 @@ const loginGoogle = async (req, res) => {
                         // save => new user => database
                         const newUserGoogle = await newUser.save();
                         if (newUserGoogle) {
-                            const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: '16d' });
+                            // Access Token
+                            const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: 30 }); //expiresIn: '16d'
+
+                            // TẠO refreshToken  => lâu hết hạn hơn => sẽ được lưu trên cookies
+                            const refreshToken = jwt.sign(
+                                {
+                                    _id: newUserGoogle._id
+                                },
+                                process.env.JWT_SECRET,
+                                // { expiresIn: 60} // expires in 60s
+                                { expiresIn: "365 days" } // expires in 365 day => ke tu khi login
+                            )
+                            // refreshToken => refreshTokenMoi
+                            refreshTokenMoi.push(refreshToken);
+
                             const { _id, username, email, admin, img_url } = newUserGoogle;
                             print('Đăng nhập GOOGLE ACCOUNT => thành công', outputType.SUCCESS);
                             res.status(200).json({
                                 message: 'Đăng nhập GOOGLE ACCOUNT thành công, user dc thêm vào DB',
                                 token,
-                                user: {
+                                refreshToken,
+                                data: {
                                     _id, username, email, admin, img_url
                                     //  picture, exp, iat
                                 },
@@ -309,21 +337,32 @@ const loginGoogle = async (req, res) => {
 }
 
 
-// loginPhoneNumber
+// loginPhoneNumber => đăng nhập số điện thoại
 const loginPhoneNumber = async (req, res) => {
 
     const phoneNumber = req.body?.phone;
+    // ACCESS Token create token
+    const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: 30 }); // expiresIn: '16d'
 
-
-    // create token
-    const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: '16d' });
-
+    // REFRESH TOKEN
+    // TẠO refreshToken  => lâu hết hạn hơn => sẽ trả về rectjs => lưu trên cookis => khi accesstoken => hết hạn => lấy refreshToken
+    const refreshToken = jwt.sign(
+        {
+            phoneNumber
+        },
+        process.env.JWT_SECRET,
+        // { expiresIn: 60} // expires in 60s
+        { expiresIn: "365 days" } // expires in 365 day => ke tu khi login
+    )
+    // refreshToken => refreshTokenMoi
+    refreshTokenMoi.push(refreshToken);
 
     print('Đăng nhập PHONE NUMBER thành công', outputType.SUCCESS);
     res.status(200).json({
         message: 'Login Phone Number=> đăng nhập số điện thoại thành công',
-        data: phoneNumber,
-        token
+        token,
+        refreshToken,
+        data: phoneNumber
 
     })
 }
@@ -506,6 +545,10 @@ const resetPassword = async (req, res) => {
     }
 
 }
+
+
+
+
 
 // refreshToken khi access token => hết hạn
 const refreshTokenlai = async (req, res) => {
