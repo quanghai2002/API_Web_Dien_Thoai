@@ -3,7 +3,6 @@ import Exception from "../exceptions/Exception.js";
 import { print, outputType } from "../helpers/print.js";
 // import { Student } from "../models/index.js";
 import { Phone } from '../models/index.js';
-import { faker } from '@faker-js/faker/locale/vi';
 import os from 'os';
 
 
