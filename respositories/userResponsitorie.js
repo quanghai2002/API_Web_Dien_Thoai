@@ -219,8 +219,8 @@ const loginGoogle = async (req, res) => {
                     const userGoogle = await User.findOne({ email: email }).exec();
                     if (userGoogle) {
                         // ACCESS TOKEN
-                        // tìm thấy email => đã REGISTER => trong database => Accest token    expiresIn: '16d'
-                        const token = jwt.sign({ _id: userGoogle._id }, process.env.JWT_SECRET, { expiresIn: 30 });
+                        // tìm thấy email => đã REGISTER => trong database => Access token    expiresIn: '16d'
+                        const token = jwt.sign({ _id: userGoogle._id, admin: userGoogle?.admin }, process.env.JWT_SECRET, { expiresIn: 30 });
                         // get info => user => db
                         const { _id, username, email, admin, orders, reviews, phoneNumber } = userGoogle;
 
@@ -230,7 +230,8 @@ const loginGoogle = async (req, res) => {
                         // TẠO refreshToken  => lâu hết hạn hơn => sẽ được lưu trên cookies
                         const refreshToken = jwt.sign(
                             {
-                                _id: userGoogle._id
+                                _id: userGoogle._id,
+                                admin: userGoogle?.admin
                             },
                             process.env.JWT_SECRET,
                             // { expiresIn: 60} // expires in 60s
