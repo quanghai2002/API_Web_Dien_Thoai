@@ -529,20 +529,25 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 }
 
 
-
 const saveUrlImagePhone = async (req, res) => {
-  try {
+  // post
+  const post = process.env.POST || 8081;
+  // địa chỉ server => mặc định sẽ là locallhost nếu chưa có host thật
+  const serverAddress = `${process.env.SERVER_ADDRESS}:${post}`; //   http://localhost:${post}
 
-    const post = process.env.POST || 8081;
+  // console.log('addressServer:', process.env.SERVER_ADDRESS)
+
+  try {
 
     // console.log('req.files', req.files)
     // Xử lý tải lên nhiều ảnh
     // Xử lý tải lên tệp ảnh và lưu chúng vào thư mục lưu trữ
-    console.log('fileUpload:', req.files)
+    // console.log('fileUpload:', req.files)
+
     const uploadedImages = req.files.map((file) => {
       // const imageUrl = `/uploads/${file.filename}`;
       // const imageUrl = `http://${os.hostname()}:${post}/uploads/${file.filename}`;
-      const imageUrl = `http://localhost:${post}/uploads/${file.filename}`;
+      const imageUrl = `${serverAddress}/uploads/${file.filename}`;
       // const imageUrl = `http://192.168.14.6:${post}/uploads/${file.filename}`;
       return imageUrl;
     });

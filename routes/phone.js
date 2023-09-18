@@ -54,7 +54,7 @@ router.post('/getPhone_ROM', phoneController.getPhoneROM);
 router.get('/:id', phoneController.getPhoneBuyID);
 
 // lưu hình ảnh và trả về URL của hình ảnh cho react
-router.post('/uploadurl/url', verifyTokenAndAdmin, upload.array('image_urls', 10), phoneController.saveUrlImagePhone);
+router.post('/uploadurl/url', upload.array('image_urls', 10), phoneController.saveUrlImagePhone);
 
 
 // lấy sản phẩm trong khoảng kích thước MÀN HÌNH nào đó
