@@ -252,7 +252,7 @@ const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, 
 
 
 // update phone
-const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion }, res) => {
+const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders }, res) => {
   try {
     const phone = await Phone.findById(_id);
 
@@ -271,7 +271,10 @@ const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_
     phone.stock_quantity = stock_quantity ?? phone.stock_quantity; // ?? null,undefined lay gia tri thu 2
     phone.image_urls = image_urls ?? phone.image_urls; // ?? null,undefined lay gia tri thu 2
     phone.promotion = promotion ?? phone.promotion; // ?? null,undefined lay gia tri thu 2
-
+    phone.category = category ?? phone.category;
+    phone.brand = brand ?? phone.brand;
+    phone.reviews = reviews ?? phone.reviews;
+    phone.orders = orders ?? phone.orders;
     await phone.save();
 
     print('Cập nhật sản phẩm thành công', outputType.SUCCESS);
