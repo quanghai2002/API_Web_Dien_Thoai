@@ -18,6 +18,8 @@ const checkToken = (req, res, next) => {
         || req?.url?.toLowerCase().trim().includes(`/api/users/loginphonenumber`)
         || req?.url?.trim().includes(`uploads/image_urls`)
         || req?.url?.trim().includes(`/favicon.ico`)
+        || req?.url?.trim().includes(`/api/payment/`)
+        || req?.url?.trim().includes(`api/payment/vnpay_return`)
     ) {
         next()
         return;
