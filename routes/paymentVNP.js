@@ -53,6 +53,8 @@ router.post('/create_payment_url', function (req, res, next) {
   let amount = req.body.amount || 10000; // số tiền thanh toán
   let bankCode = req.body.bankCode;
 
+  console.log('Tổng giá trị đơn hàng', amount)
+
   let locale = req?.body?.language || 'vn';
   // if (locale === null || locale === '') {
   //   locale = 'vn';
