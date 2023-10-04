@@ -15,7 +15,8 @@ const config = {
   vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
   vnp_Api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction",
   vnp_ReturnUrl: "http://localhost:5173/payment/vnpay_return"
-  // "vnp_ReturnUrl": "http://localhost:8888/order/vnpay_return"
+  // vnp_ReturnUrl: "http://localhost:5173/payment"
+
 }
 
 
@@ -130,7 +131,7 @@ Dữ liệu VNPAY trả về bằng cách chuyển hướng trình duyệt web c
 router.get('/vnpay_return', function (req, res, next) {
   let vnp_Params = req.query;
 
-  console.log('vnp_Params', vnp_Params)
+  // console.log('vnp_Params', vnp_Params)
 
   let secureHash = vnp_Params['vnp_SecureHash'];
 
@@ -169,13 +170,13 @@ router.get('/vnpay_return', function (req, res, next) {
   let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
 
 
-  console.log('signed', signed)
+  // console.log('signed', signed)
 
   if (secureHash === signed) {
     //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
     // res.redirect('/payment/success'); // Chuyển hướng đến trang thành công
 
-    console.log('GIAO DỊCH THÀNH CÔNG:', vnp_Params['vnp_ResponseCode'])
+    console.log(' KẾT QUẢ GIAO DỊCH, GIAO DỊCH THÀNH CÔNG:', vnp_Params['vnp_ResponseCode'])
     res.status(200).json({
       message: 'Thanh Toán thành công',
       code: vnp_Params['vnp_ResponseCode']
@@ -190,7 +191,7 @@ router.get('/vnpay_return', function (req, res, next) {
 
     })
 
-    console.log('GIAO DỊCH THẤT BẠI:', 97)
+    console.log('KẾT QUẢ GIAO DỊCH,GIAO DỊCH THẤT BẠI:', 97)
   }
 });
 
