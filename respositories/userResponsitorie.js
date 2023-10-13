@@ -363,7 +363,10 @@ const loginPhoneNumber = async (req, res) => {
         message: 'Login Phone Number=> đăng nhập số điện thoại thành công',
         token,
         refreshToken,
-        data: phoneNumber
+        data: {
+            phoneNumber,
+            admin: false  // mặc định đăng nhập bằng số điện thoại sẽ không là admin được OKE
+        }
 
     })
 }
