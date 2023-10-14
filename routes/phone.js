@@ -8,7 +8,7 @@ import { verifyTokenAndAdmin } from '../authentication/auth.js';
 const router = express.Router();
 
 
-// search students => theo tên sản phẩm
+// search phone => theo tên sản phẩm
 router.get('/search', phoneController.searchPhone);
 
 // pagination and sort phone theo giá sản phẩm từ CAO đến THẤP => desc => giảm dần
@@ -49,9 +49,8 @@ router.post('/getPhone_RAM', phoneController.getPhoneRAM);
 router.post('/getPhone_ROM', phoneController.getPhoneROM);
 
 
-
 // get 1 sản phẩm theo id 
-router.get('/:id', phoneController.getPhoneBuyID);
+router.get('/getonephone/:id', phoneController.getPhoneBuyID);
 
 // lưu hình ảnh và trả về URL của hình ảnh cho react
 router.post('/uploadurl/url', upload.array('image_urls', 10), phoneController.saveUrlImagePhone);

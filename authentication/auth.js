@@ -20,6 +20,10 @@ const checkToken = (req, res, next) => {
         || req?.url?.trim().includes(`/favicon.ico`)
         || req?.url?.trim().includes(`/api/payment/`)
         || req?.url?.trim().includes(`api/payment/vnpay_return`)
+        || req?.url?.trim().includes(`/api/phone?page=`)
+        || req?.url?.trim().includes(`/api/phone/sort/price`)
+        || req?.url?.trim().includes(`/api/phone/sort/price_Asc?`)
+        || req?.url?.trim().includes(`/api/phone/getonephone`)
     ) {
         next()
         return;
