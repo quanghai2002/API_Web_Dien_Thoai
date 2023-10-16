@@ -31,7 +31,7 @@ const User = mongoose.model('User',
         },
 
         address: {
-            type: String,
+            type: Object,
         },
 
         img_url: {

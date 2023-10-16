@@ -671,7 +671,7 @@ const getOneUser = async (req, res) => {
 // UPDATE user
 const updateUser = async (req, res) => {
 
-    const { _id, username, img_url } = req?.body;
+    const { _id, username, img_url, address, phoneNumber } = req?.body;
     console.log({ _id });
     console.log({ username });
     console.log({ img_url });
@@ -681,6 +681,8 @@ const updateUser = async (req, res) => {
 
         userUpdate.username = username ?? userUpdate.username;
         userUpdate.img_url = img_url ?? userUpdate.img_url;
+        userUpdate.address = address ?? userUpdate.address;
+        userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
 
         await userUpdate.save();
 
@@ -698,4 +700,6 @@ const updateUser = async (req, res) => {
         });
     }
 }
+
+
 export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber, getOneUser, updateUser }
