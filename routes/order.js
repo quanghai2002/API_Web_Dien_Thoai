@@ -8,26 +8,26 @@ const router = express.Router();
 // insert đơn hàng
 router.post('/insert', orderController.insertOrder);
 
-// update đơn hàng => admin của shop mới được chỉnh sửa đơn hàng
-router.post('/update', verifyTokenAndAdmin, orderController.updateOrder);
+// update đơn hàng 
+router.post('/update', orderController.updateOrder);
 
 // delete 1 đơn hàng
 router.get('/delete/:idDelete', orderController.deleteOrder);
 
-// delete NHIỀU đơn hàng => admin mới được quyền xóa nhiều đơn hàng
-router.post('/deletemany', verifyTokenAndAdmin, orderController.deleteOrderMany);
+// delete NHIỀU đơn hàng => 
+router.post('/deletemany', orderController.deleteOrderMany);
 
-// GET List đơn hàng => admin mới được quyền xóa nhiều đơn hàng
-router.get('/getall', verifyTokenAndAdmin, orderController.getListOrder);
+// GET List đơn hàng => 
+router.get('/getall', orderController.getListOrder);
 
-// SORT List đơn hàng theo DATE=> admin mới được quyền xóa nhiều đơn hàng
-router.get('/sortdate', verifyTokenAndAdmin, orderController.getListOrderSortDate);
+// SORT List đơn hàng theo DATE=> 
+router.get('/sortdate', orderController.getListOrderSortDate);
 
 // TÌM đơn hàng theo Status và SORT theo DATE=> admin mới được quyền
-router.post('/getorderbystatus', verifyTokenAndAdmin, orderController.getOrderByStatus);
+router.post('/getorderbystatus', orderController.getOrderByStatus);
 
 // get 1 đơn hàng theo id 
-router.get('/getbuyid/:id', verifyTokenAndAdmin, orderController.getOrderByID);
+router.get('/getbuyid/:id', orderController.getOrderByID);
 
 export default router;
 

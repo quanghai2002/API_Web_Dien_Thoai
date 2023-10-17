@@ -8,11 +8,11 @@ import { orderSchema } from '../models/index.js';
 
 
 // insert đơn hàng 
-const insertOrder = async ({ status, total_price, shipping_address, payment_method, user, products }, res) => {
+const insertOrder = async ({ status, total_price, shipping_address, payment_method, user, products, products2 }, res) => {
 
   try {
 
-    const order = await orderSchema.create({ status, total_price, shipping_address, payment_method, user, products });
+    const order = await orderSchema.create({ status, total_price, shipping_address, payment_method, user, products, products2 });
     print('thêm MỚI ĐƠN HÀNG  =>  Thành Công', outputType.SUCCESS);
     res.status(200).json({
       message: 'Thêm mới đơn hàng thành công',
@@ -31,7 +31,7 @@ const insertOrder = async ({ status, total_price, shipping_address, payment_meth
 };
 
 // sửa đơn hàng 
-const updateOrder = async ({ _id, status, total_price, shipping_address, payment_method, user, products }, res) => {
+const updateOrder = async ({ _id, status, total_price, shipping_address, payment_method, user, products, products2 }, res) => {
 
   try {
 
@@ -43,6 +43,7 @@ const updateOrder = async ({ _id, status, total_price, shipping_address, payment
     orderUpdate.payment_method = payment_method ?? orderUpdate.payment_method; // ?? null,undefined lay gia tri thu 2
     orderUpdate.user = user ?? orderUpdate.user; // ?? null,undefined lay gia tri thu 2
     orderUpdate.products = products ?? orderUpdate.products; // ?? null,undefined lay gia tri thu 2
+    orderUpdate.products2 = products2 ?? orderUpdate.products2; // ?? null,undefined lay gia tri thu 2
 
     await orderUpdate.save();
 

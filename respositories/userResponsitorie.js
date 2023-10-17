@@ -651,7 +651,7 @@ const getOneUser = async (req, res) => {
     let id = req?.params?.id;
     console.log({ id });
     try {
-        const useGetOne = await User.findById(id);
+        const useGetOne = await User.findById(id).populate('orders');
 
         print("Lấy 1 USER theo ID thành công", outputType.SUCCESS)
         res.status(200).json({
@@ -671,7 +671,7 @@ const getOneUser = async (req, res) => {
 // UPDATE user
 const updateUser = async (req, res) => {
 
-    const { _id, username, img_url, address, phoneNumber } = req?.body;
+    const { _id, username, img_url, address, phoneNumber, orders } = req?.body;
     console.log({ _id });
     console.log({ username });
     console.log({ img_url });
@@ -683,6 +683,7 @@ const updateUser = async (req, res) => {
         userUpdate.img_url = img_url ?? userUpdate.img_url;
         userUpdate.address = address ?? userUpdate.address;
         userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
+        userUpdate.orders = [...userUpdate?.orders, ...orders]
 
         await userUpdate.save();
 

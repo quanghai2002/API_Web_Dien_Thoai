@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 const Schema = mongoose.Schema;
 
 const orderSchema = mongoose.model('Order',
@@ -8,20 +9,28 @@ const orderSchema = mongoose.model('Order',
       default: Date.now
     },
     status: {
-      type: String,
-      default: "Đang xử lý"
+      type: Object,
+      default: {
+        code: 1,
+        state: 'Chờ xác nhận'
+      }
     },
     total_price: {
       type: Number,
     },
     shipping_address: {
-      type: String,
+      type: Object,
     },
     payment_method: {
       type: String,
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+
+    // ---TEST ĐỂ LƯU CÁC SẢN PHẨM ------
+    products2: {
+      type: Array
+    },
 
     createdAt: {
       type: Date,
