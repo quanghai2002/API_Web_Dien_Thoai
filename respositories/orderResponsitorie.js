@@ -30,6 +30,29 @@ const insertOrder = async ({ status, total_price, shipping_address, payment_meth
   }
 };
 
+
+// insert many đơn hàng => insert nhiều đơn hàng 1 lúc 
+const insertManyOrder = async (req, res) => {
+  const { orders } = req?.body;
+  try {
+    const createdOrders = await orderSchema.insertMany(orders);
+    res.status(200).json({
+      message: 'Thêm NHIỀU ĐƠN HÀNG THÀNH CÔNG',
+      data: createdOrders,
+    })
+
+  } catch (error) {
+    print(error, outputType.ERROR)
+    console.log(error)
+    // error from validation
+    res.status(500).json({
+      message: ` KHÔNG thêm được NHIỀU đơn hàng, vui lòng thử lại! `,
+    })
+
+  }
+};
+
+
 // sửa đơn hàng 
 const updateOrder = async ({ _id, status, total_price, shipping_address, payment_method, user, products, products2 }, res) => {
 
@@ -307,4 +330,4 @@ const getOrderByID = async (req, res) => {
 }
 
 
-export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID }
+export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID, insertManyOrder }

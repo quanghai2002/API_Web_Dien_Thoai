@@ -18,6 +18,22 @@ const insertOrder = async (req, res) => {
 }
 
 
+
+// insert many đơn hàng => insert nhiều đơn hàng 1 lúc
+const insertOrderMany = async (req, res) => {
+  try {
+    await orderResponsitorie.insertManyOrder(req, res);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: `thêm NHIỀU Đơn Hàng THẤT BẠI !, Vui lòng thử lại`,
+    })
+  }
+
+}
+
+
 // Update đơn hàng
 const updateOrder = async (req, res) => {
   try {
@@ -129,6 +145,7 @@ export default {
   getListOrder,
   getListOrderSortDate,
   getOrderByStatus,
-  getOrderByID
+  getOrderByID,
+  insertOrderMany
 }
 

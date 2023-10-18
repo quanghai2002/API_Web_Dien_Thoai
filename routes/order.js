@@ -5,8 +5,12 @@ import { verifyTokenAndAdmin } from '../authentication/auth.js';
 
 const router = express.Router();
 
-// insert đơn hàng
+// insert 1 đơn hàng
 router.post('/insert', orderController.insertOrder);
+
+
+// insert many đơn hàng 1 lúc => thêm nhiều đơn hàng 1 lúc
+router.post('/insertmany', orderController.insertOrderMany);
 
 // update đơn hàng 
 router.post('/update', orderController.updateOrder);

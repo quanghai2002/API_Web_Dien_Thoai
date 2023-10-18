@@ -25,7 +25,10 @@ const orderSchema = mongoose.model('Order',
       type: String,
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    // products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    products: {
+      type: Object
+    },
 
     // ---TEST ĐỂ LƯU CÁC SẢN PHẨM ------
     products2: {
