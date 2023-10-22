@@ -155,17 +155,17 @@ const getListOrder = async (req, res) => {
       .skip((page - 1) * size)
       .limit(size)
       .populate('user')
-      .populate({
-        path: 'products',
-        model: 'Product',
-      })
+      // .populate({
+      //   path: 'products',
+      //   model: 'Product',
+      // })  không cần đến nữa vì đã lưu trực tiếp 1 sản phẩm vào trong products rồi
       .exec();
 
 
     // tổng số bản ghi của order thỏa mãn điều kiện
     const countOrder = await orderSchema.find()
       .populate('user')
-      .populate('products')
+      // .populate('products')
       .exec();
 
     // phân trang đơn hàng  
@@ -205,10 +205,10 @@ const getListOrderSortDate = async (req, res) => {
       .skip((page - 1) * size)
       .limit(size)
       .populate('user')
-      .populate({
-        path: 'products',
-        model: 'Product',
-      })
+      // .populate({
+      //   path: 'products',
+      //   model: 'Product',
+      // })
       .exec();
 
 
@@ -216,7 +216,7 @@ const getListOrderSortDate = async (req, res) => {
     const countOrder = await orderSchema.find()
       .sort({ order_date: -1 })
       .populate('user')
-      .populate('products')
+      // .populate('products')
       .exec();
 
     // phân trang đơn hàng  
@@ -259,10 +259,10 @@ const getOrderByStatus = async (req, res) => {
       .skip((page - 1) * size)
       .limit(size)
       .populate('user')
-      .populate({
-        path: 'products',
-        model: 'Product',
-      })
+      // .populate({
+      //   path: 'products',
+      //   model: 'Product',
+      // })
       .exec();
 
 
@@ -270,7 +270,7 @@ const getOrderByStatus = async (req, res) => {
     const countOrder = await orderSchema.find({ status })
       .sort({ order_date: -1 })
       .populate('user')
-      .populate('products')
+      // .populate('products')
       .exec();
 
     // phân trang đơn hàng  
@@ -306,10 +306,10 @@ const getOrderByID = async (req, res) => {
     const category = await orderSchema.findById(orderId)
 
       .populate('user')
-      .populate({
-        path: 'products',
-        model: 'Product',
-      })
+      // .populate({
+      //   path: 'products',
+      //   model: 'Product',
+      // })
       .exec();
 
 
