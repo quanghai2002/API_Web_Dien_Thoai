@@ -683,7 +683,7 @@ const updateUser = async (req, res) => {
         userUpdate.img_url = img_url ?? userUpdate.img_url;
         userUpdate.address = address ?? userUpdate.address;
         userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
-        userUpdate.orders = [...userUpdate?.orders, ...orders]
+        userUpdate.orders = orders ? [...userUpdate?.orders, ...orders] : [...userUpdate?.orders] // nếu có order thì lấy order không thì thôi
 
         await userUpdate.save();
 
