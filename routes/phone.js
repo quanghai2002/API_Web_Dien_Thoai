@@ -55,6 +55,9 @@ router.post('/getPhone_ROM', phoneController.getPhoneROM);
 // get 1 sản phẩm theo id 
 router.get('/getonephone/:id', phoneController.getPhoneBuyID);
 
+// LẤY NHIỀU SẢN PHẨM THEO ID
+router.post('/getmanyphone', phoneController.getmanyphone);
+
 // lưu hình ảnh và trả về URL của hình ảnh cho react
 router.post('/uploadurl/url', upload.array('image_urls', 10), phoneController.saveUrlImagePhone);
 

@@ -225,6 +225,28 @@ const getPhoneBuyID = async (phoneId, req, res) => {
 
 }
 
+// get many phone => lấy nhiều sản phẩm theo list ID
+const getmanyphone = async (req, res) => {
+
+  const listID = req?.body;
+  try {
+    // Lấy thông tin các sản phẩm => THEO DANH SÁCH ID TRUYỀN LÊN
+    const listPhoneResult = await Phone.find({ _id: { $in: listID } });
+
+    print('LẤY NHIỀU SẢN PHẨM THEO ID THÀNH CÔNG', outputType.SUCCESS);
+    res.status(200).json({
+      message: 'LẤY NHIỀU SẢN PHẨM THEO ID THÀNH CÔNG',
+      data: listPhoneResult,
+    });
+
+  } catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: `LẤY NHIỀU SẢN PHẨM THẤT BẠI`,
+    })
+  }
+}
 
 // insert phone
 const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews }, res) => {
@@ -624,4 +646,4 @@ const saveUrlImagePhone = async (req, res) => {
 
 
 
-export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh, saveUrlImagePhone, updatePhoneMany }
+export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh, saveUrlImagePhone, updatePhoneMany, getmanyphone }

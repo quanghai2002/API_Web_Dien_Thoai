@@ -190,6 +190,19 @@ const getPhoneBuyID = async (req, res) => {
 }
 
 
+//  get many phone theo ID => Lấy nhiều sản phẩm theo Id
+const getmanyphone = async (req, res) => {
+  try {
+
+    await phoneResponsitorie.getmanyphone(req, res);
+
+  } catch (error) {
+    res.status(500).json({
+      message: `LẤY NHIỀU SẢN PHẨM THẤT BẠI !`,
+    })
+  }
+}
+
 // update phone => theo id
 const updatePhone = async (req, res) => {
 
@@ -220,7 +233,7 @@ const updatePhoneMany = async (req, res) => {
   }
 }
 
-// insert student
+// insert phone
 const insertPhone = async (req, res) => {
   try {
     await phoneResponsitorie.insertPhone(req?.body, res);
@@ -364,7 +377,8 @@ export default {
   getPhoneROM,
   getPhoneKichThuocManHinh,
   saveUrlImagePhone,
-  updatePhoneMany
+  updatePhoneMany,
+  getmanyphone
 
 
   // generateFakeStudent // có thể xóa => fake data
