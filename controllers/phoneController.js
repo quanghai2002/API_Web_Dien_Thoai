@@ -207,6 +207,19 @@ const updatePhone = async (req, res) => {
 
 }
 
+// update manyPhone => cập nhật nhiều sản phẩm 1 lúc
+const updatePhoneMany = async (req, res) => {
+  try {
+
+    await phoneResponsitorie.updatePhoneMany(req, res);
+
+  } catch (error) {
+    res.status(500).json({
+      message: `Cập nhật NHIỀU - MANY sản phẩm thất bại !, vui lòng thử lại`,
+    })
+  }
+}
+
 // insert student
 const insertPhone = async (req, res) => {
   try {
@@ -350,7 +363,8 @@ export default {
   getPhoneRAM,
   getPhoneROM,
   getPhoneKichThuocManHinh,
-  saveUrlImagePhone
+  saveUrlImagePhone,
+  updatePhoneMany
 
 
   // generateFakeStudent // có thể xóa => fake data

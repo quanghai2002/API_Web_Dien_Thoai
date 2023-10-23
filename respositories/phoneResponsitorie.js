@@ -251,7 +251,7 @@ const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, 
 }
 
 
-// update phone
+// update  1 phone => CẬP NHẬT 1 SẢN PHẨM
 const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders }, res) => {
   try {
     const phone = await Phone.findById(_id);
@@ -288,11 +288,63 @@ const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_
     print(error, outputType.ERROR)
     // error from validation
     res.status(500).json({
-      message: `update students failed, cập nhật sản phẩm thất bại, thử lại id `,
+      message: `cập nhật sản phẩm thất bại, thử lại id `,
     })
 
   }
 }
+
+// update many phone -- CẬP NHẬT NHIỀU SẢN PHẨM 1 LÚC 
+const updatePhoneMany = async (req, res) => {
+
+  try {
+
+    const phoneUpdates = req?.body; // Đây là danh sách các sản phẩm cần cập nhật
+    // console.log('thông tin các sản phẩm cần cập nhật:', phoneUpdates);
+
+    const updatedProducts = [];
+
+    for (const update of phoneUpdates) {
+      const productId = update?._id;
+      const newStockQuantity = update?.stock_quantity;
+
+      // Tạo điều kiện cập nhật cho sản phẩm cụ thể
+      const updateCondition = { _id: productId };
+
+      // Tạo đối tượng chứa trường cần cập nhật và giá trị mới
+      const updateFields = {
+        $set: {
+          stock_quantity: newStockQuantity,
+        },
+      };
+      // Sử dụng updateOne để cập nhật sản phẩm cụ thể
+      // await Phone.updateOne(updateCondition, updateFields);
+      const result = await Phone.updateOne(updateCondition, updateFields);
+
+      if (result?.matchedCount > 0) {
+        // Nếu sản phẩm đã được cập nhật thành công, thêm nó vào danh sách updatedProducts
+        updatedProducts.push(productId);
+      }
+    };
+
+    // Lấy thông tin các sản phẩm đã cập nhật thành công
+    const updatedProductDetails = await Phone.find({ _id: { $in: updatedProducts } });
+
+    print('Cập nhật nhiều sản phẩm thành công', outputType.SUCCESS);
+    res.status(200).json({
+      message: 'CẬP NHẬT NHIỀU SẢN PHẨM THÀNH CÔNG',
+      data: updatedProductDetails,
+    });
+
+  } catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: `CẬP NHẬT NHIỀU SẢN PHẨM THẤT BẠI`,
+    })
+  }
+}
+
 
 // deletet 1 phone buy ID
 const deletePhone = async (phoneId, res) => {
@@ -572,4 +624,4 @@ const saveUrlImagePhone = async (req, res) => {
 
 
 
-export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh, saveUrlImagePhone }
+export default { insertPhone, updatePhone, deletePhone, deleteManyPhone, getPhoneBuyID, getAllPhone, getAllPhoneNoPagination, searchPhone, sortPhonePrice, sortPhonePrice_Asc, filterPhonePrice, filterPhoneRAM, filterPhoneROM, filterPhoneKichThuocManHinh, saveUrlImagePhone, updatePhoneMany }

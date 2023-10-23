@@ -23,8 +23,11 @@ router.post('/insert', verifyTokenAndAdmin, phoneController.insertPhone);
 // insert => fake students => framework => FAKE
 // router.post('/generateFakeStudent', studentsController.generateFakeStudent)  // khi cần fake lần đầu => điền nhiều bản ghi
 
-//  update phone
+//  update 1 phone
 router.patch('/update', verifyTokenAndAdmin, phoneController.updatePhone);
+
+//  update many phone => CẬP NHẬT NHIỀU SẢN PHẨM
+router.post('/updatemany', phoneController.updatePhoneMany);
 
 // delete one product buy ID
 router.delete('/delete/:idDelete', verifyTokenAndAdmin, phoneController.deletePhone);
