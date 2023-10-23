@@ -3,6 +3,7 @@ import Exception from "../exceptions/Exception.js";
 import { print, outputType } from "../helpers/print.js";
 // import { Student } from "../models/index.js";
 import { Phone } from '../models/index.js';
+import mongoose from 'mongoose';
 import os from 'os';
 
 
@@ -229,14 +230,21 @@ const getPhoneBuyID = async (phoneId, req, res) => {
 const getmanyphone = async (req, res) => {
 
   const listID = req?.body;
+
   try {
-    // Lấy thông tin các sản phẩm => THEO DANH SÁCH ID TRUYỀN LÊN
-    const listPhoneResult = await Phone.find({ _id: { $in: listID } });
+
+    // const listPhoneResult = await Phone.find({ _id: { $in: listID } }).exec();
+    // Sử dụng .find() để tìm kiếm sản phẩm theo danh sách ID
+
+    const listPhoneMany = await Phone.find({ _id: { $in: listID } });
+
+    // Sắp xếp kết quả trả về theo thứ tự danh sách ID ban đầu
+    const sortedProducts = listID?.map(id => listPhoneMany?.find(product => product._id.toString() === id));
 
     print('LẤY NHIỀU SẢN PHẨM THEO ID THÀNH CÔNG', outputType.SUCCESS);
     res.status(200).json({
       message: 'LẤY NHIỀU SẢN PHẨM THEO ID THÀNH CÔNG',
-      data: listPhoneResult,
+      data: sortedProducts,
     });
 
   } catch (error) {
