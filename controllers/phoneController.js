@@ -69,8 +69,8 @@ const searchPhone = async (req, res) => {
       page = req.query?.page
     }
 
-    // giới hạn tìm thấy là 16
-    const limit = 16;
+    // giới hạn tìm thấy là 15 sản phẩm
+    const limit = 15;
 
     // get data khop tu khoa search
     // tìm dữ liệu khớp với từ khóa search

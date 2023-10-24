@@ -71,7 +71,6 @@ const getAllPhoneNoPagination = async (req, res) => {
 };
 
 // searchPhone => tìm kiếm theo tên sản phẩm 
-
 const searchPhone = async ({ searchName, page, limit }) => {
 
   let resultSearch = await Phone.find({
