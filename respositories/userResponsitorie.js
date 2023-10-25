@@ -90,8 +90,8 @@ const login = async ({ email, password }, res, req) => {
                     admin: existingUser.admin,
                 },
                 process.env.JWT_SECRET,
-                { expiresIn: 30 } // expires in 60s
-                // { expiresIn: "16 days" } // expires in 16 day => ke tu khi login
+                // { expiresIn: 30 } // expires in 60s
+                { expiresIn: "16 days" } // expires in 16 day => ke tu khi login
                 // { expiresIn: "1h" } // expires in 1h => ke tu khi login
 
             );
