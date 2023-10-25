@@ -220,7 +220,7 @@ const loginGoogle = async (req, res) => {
                     if (userGoogle) {
                         // ACCESS TOKEN
                         // tìm thấy email => đã REGISTER => trong database => Access token    expiresIn: '16d'
-                        const token = jwt.sign({ _id: userGoogle._id, admin: userGoogle?.admin }, process.env.JWT_SECRET, { expiresIn: 30 });
+                        const token = jwt.sign({ _id: userGoogle._id, admin: userGoogle?.admin }, process.env.JWT_SECRET, { expiresIn: "36 days" });
                         // get info => user => db
                         const { _id, username, email, admin, orders, reviews, phoneNumber } = userGoogle;
 
@@ -284,7 +284,7 @@ const loginGoogle = async (req, res) => {
                         const newUserGoogle = await newUser.save();
                         if (newUserGoogle) {
                             // Access Token
-                            const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: 30 }); //expiresIn: '16d'
+                            const token = jwt.sign({ _id: newUserGoogle._id }, process.env.JWT_SECRET, { expiresIn: "36 days" }); //expiresIn: '16d'
 
                             // TẠO refreshToken  => lâu hết hạn hơn => sẽ được lưu trên cookies
                             const refreshToken = jwt.sign(
@@ -343,7 +343,7 @@ const loginPhoneNumber = async (req, res) => {
 
     const phoneNumber = req.body?.phone;
     // ACCESS Token create token
-    const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: 30 }); // expiresIn: '16d'
+    const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: "36 days" }); // expiresIn: '16d'
 
     // REFRESH TOKEN
     // TẠO refreshToken  => lâu hết hạn hơn => sẽ trả về rectjs => lưu trên cookis => khi accesstoken => hết hạn => lấy refreshToken
