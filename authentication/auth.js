@@ -5,7 +5,7 @@ import { print, outputType } from '../helpers/print.js';
 // check token là user đã đăng nhập
 const checkToken = (req, res, next) => {
     // Authentication
-    // không áp dụng=> login, register
+    // không áp dụng=> login, register, tìm kiếm, xem tất cả sản phẩm,xem chi tiết sản phẩm
     console.log('req:', req?.url)
 
     if (req?.url?.toLowerCase().trim() === '/api/users/login'
@@ -24,6 +24,7 @@ const checkToken = (req, res, next) => {
         || req?.url?.trim().includes(`/api/phone/sort/price`)
         || req?.url?.trim().includes(`/api/phone/sort/price_Asc?`)
         || req?.url?.trim().includes(`/api/phone/getonephone`)
+        || req?.url?.trim().includes(`/api/phone/search?name=`)
     ) {
         next()
         return;
