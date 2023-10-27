@@ -21,8 +21,12 @@ router.get('/delete/:idDelete', orderController.deleteOrder);
 // delete NHIỀU đơn hàng => 
 router.post('/deletemany', orderController.deleteOrderMany);
 
-// GET List đơn hàng => 
+// GET List đơn hàng => Có Pagination
 router.get('/getall', orderController.getListOrder);
+
+// GET TẤT CẢ ĐƠN HÀNG KHÔNG PHÂN TRANG
+router.get('/getallordernopagination', orderController.getAllOrderNoPagination);
+
 
 // SORT List đơn hàng theo DATE=> 
 router.get('/sortdate', orderController.getListOrderSortDate);

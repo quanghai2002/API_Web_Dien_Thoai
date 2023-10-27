@@ -189,6 +189,29 @@ const getListOrder = async (req, res) => {
   }
 }
 
+// LẤY TẤT CẢ ĐƠN HÀNG => KHÔNG CÓ PHÂN TRANG
+const getAllOrderNoPagination = async (req, res) => {
+
+  try {
+    const categoryAll = await orderSchema.find()
+      .populate('user')
+      .exec();
+
+    print('LẤY TẤT CẢ ĐƠN HÀNG => KHÔNG PHÂN TRANG => THÀNH CÔNG', outputType.SUCCESS);
+    // KHÔNG CẦN PHÂN TRANG ĐƠN HÀNG 
+    res.status(200).json({
+      message: 'GET TẤT CẢ ĐƠN HÀNG => KHÔNG PHÂN TRANG => thành công',
+      data: categoryAll,
+    })
+  } catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: ` LẤY TẤT CẢ ĐƠN HÀNG => KHÔNG PHÂN TRANG THẤT BẠI =>, vui lòng thử lại! `,
+    })
+  }
+}
+
 // SORT đơn hàng THEO Thời gian gần đây 
 const getListOrderSortDate = async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Page number, default to 1
@@ -330,4 +353,4 @@ const getOrderByID = async (req, res) => {
 }
 
 
-export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID, insertManyOrder }
+export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID, insertManyOrder, getAllOrderNoPagination }

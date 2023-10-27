@@ -79,7 +79,7 @@ const deleteOrderMany = async (req, res) => {
 }
 
 
-// GET danh sách đơn hàng  => admin mới có quyền xóa này
+// GET danh sách đơn hàng  => admin mới có quyền xóa này => có phân trang
 const getListOrder = async (req, res) => {
   try {
     await orderResponsitorie.getListOrder(req, res);
@@ -93,6 +93,19 @@ const getListOrder = async (req, res) => {
 
 }
 
+// LẤY TẤT CẢ ĐƠN HÀNG KHÔNG CÓ PHÂN TRANG
+const getAllOrderNoPagination = async (req, res) => {
+  try {
+    await orderResponsitorie.getAllOrderNoPagination(req, res);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: `LẤY TẤT CẢ KHÔNG PHÂN TRANG đơn hàng thất bại !, Vui lòng thử lại`,
+    })
+  }
+
+}
 
 //SORT danh sách đơn hàng => theo DATE gần đây nhất => admin mới có quyền xóa này
 const getListOrderSortDate = async (req, res) => {
@@ -146,6 +159,7 @@ export default {
   getListOrderSortDate,
   getOrderByStatus,
   getOrderByID,
-  insertOrderMany
+  insertOrderMany,
+  getAllOrderNoPagination
 }
 
