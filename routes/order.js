@@ -15,6 +15,9 @@ router.post('/insertmany', orderController.insertOrderMany);
 // update đơn hàng 
 router.post('/update', orderController.updateOrder);
 
+// update many đơn hàng => cập nhật nhiều đơn hàng cùng 1 lúc
+router.post('/updatemanyorder', orderController.updateOrderMany);
+
 // delete 1 đơn hàng
 router.get('/delete/:idDelete', orderController.deleteOrder);
 

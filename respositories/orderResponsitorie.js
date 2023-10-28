@@ -87,6 +87,54 @@ const updateOrder = async ({ _id, status, total_price, shipping_address, payment
   }
 };
 
+// UPDATE MANY ĐƠN HÀNG 
+const updateOrderMany = async (req, res) => {
+
+  try {
+    const orderUpdates = req?.body; // Đây là danh sách các sản phẩm cần cập nhật
+    // console.log('thông tin các đơn hàng cần cập nhật là:', orderUpdates);
+    const updatedProducts = [];
+
+    for (const update of orderUpdates) {
+      const productId = update?._id;
+      const newStatus = update?.status;
+
+      // Tạo điều kiện cập nhật chon đơn hàng
+      const updateCondition = { _id: productId };
+
+      // Tạo đối tượng chứa trường cần cập nhật và giá trị mới
+      const updateFields = {
+        $set: {
+          status: newStatus,
+        },
+      };
+      // Sử dụng updateOne để cập nhật đơn hàng cụ thể
+      const result = await orderSchema.updateOne(updateCondition, updateFields);
+
+      if (result?.matchedCount > 0) {
+        // Nếu sản phẩm đã được cập nhật thành công, thêm nó vào danh sách updatedProducts
+        updatedProducts.push(productId);
+      }
+    };
+
+    // Lấy thông tin các đơn hàng đã cập nhật thành công
+    const updateOrderDetails = await orderSchema.find({ _id: { $in: updatedProducts } });
+
+    print('Cập nhật nhiều ĐƠN HÀNG thành công', outputType.SUCCESS);
+    res.status(200).json({
+      message: 'CẬP NHẬT NHIỀU ĐƠN HÀNG THÀNH CÔNG',
+      data: updateOrderDetails,
+    });
+
+  } catch (error) {
+    print(error, outputType.ERROR)
+    // error from validation
+    res.status(500).json({
+      message: `CẬP NHẬT NHIỀU ĐƠN HÀNG THẤT BẠI`,
+    })
+  }
+
+};
 
 //  xóa đơn hàng
 const deleteOrder = async (req, res) => {
@@ -353,4 +401,4 @@ const getOrderByID = async (req, res) => {
 }
 
 
-export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID, insertManyOrder, getAllOrderNoPagination }
+export default { insertOrder, updateOrder, deleteOrder, deleteManyOrder, getListOrder, getListOrderSortDate, getOrderByStatus, getOrderByID, insertManyOrder, getAllOrderNoPagination, updateOrderMany }

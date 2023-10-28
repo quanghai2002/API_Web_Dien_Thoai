@@ -47,7 +47,19 @@ const updateOrder = async (req, res) => {
   }
 
 }
+// Update Many nhiều đơn hàng
+const updateOrderMany = async (req, res) => {
+  try {
+    await orderResponsitorie.updateOrderMany(req, res);
 
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: `Update MANY => CẬP NHẬT NHIỀU đơn hàng thất bại !, Vui lòng thử lại`,
+    })
+  }
+
+}
 
 // DELETE 1 đơn hàng
 const deleteOrder = async (req, res) => {
@@ -160,6 +172,7 @@ export default {
   getOrderByStatus,
   getOrderByID,
   insertOrderMany,
-  getAllOrderNoPagination
+  getAllOrderNoPagination,
+  updateOrderMany
 }
 
