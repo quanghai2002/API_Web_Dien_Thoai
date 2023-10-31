@@ -401,7 +401,7 @@ const register = async ({ username, email, password, phoneNumber, address, admin
 
         }
         else {
-            // encode bcrypt password
+            // encode bcrypt password => mã hóa mật khẩu
             const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
             const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
 
@@ -691,10 +691,11 @@ const getOneUser = async (req, res) => {
 // UPDATE user
 const updateUser = async (req, res) => {
 
-    const { _id, username, img_url, address, phoneNumber, orders } = req?.body;
-    console.log({ _id });
-    console.log({ username });
-    console.log({ img_url });
+    const { _id, username, img_url, address, phoneNumber, orders, email, admin, password } = req?.body;
+
+    // encode bcrypt password => mã hóa mật khẩu
+    const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+    const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
 
     try {
         const userUpdate = await User.findById(_id);
@@ -703,6 +704,9 @@ const updateUser = async (req, res) => {
         userUpdate.img_url = img_url ?? userUpdate.img_url;
         userUpdate.address = address ?? userUpdate.address;
         userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
+        userUpdate.email = email ?? userUpdate.email;
+        userUpdate.admin = admin ?? userUpdate.admin;
+        userUpdate.password = password ? hashedPassword : userUpdate.password; // nếu có mk truyền lên thì lấy mk đó đã mã hóa => không thì lấy mặc định
         userUpdate.orders = orders ? [...userUpdate?.orders, ...orders] : [...userUpdate?.orders] // nếu có order thì lấy order không thì thôi
 
         await userUpdate.save();
