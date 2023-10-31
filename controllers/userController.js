@@ -94,11 +94,11 @@ const logout = async (req, res) => {
 // register user
 const register = async (req, res) => {
 
-    const { username, email, password, phoneNumber, address } = req.body;
+    const { username, email, password, phoneNumber, address, admin } = req.body;
 
     try {
 
-        let user = await useResponsitorie.register({ username, email, password, phoneNumber, address });
+        let user = await useResponsitorie.register({ username, email, password, phoneNumber, address, admin });
 
         res.status(200).json({
             message: 'Register user successfully, Đăng kí thành công !',
@@ -155,6 +155,19 @@ const getAllUser = async (req, res) => {
         console.log(error)
         res.status(500).json({
             message: 'GET ALL user failed'
+        })
+    }
+}
+
+// GET ALL USERS NO PAGINATIONS 
+const getAllUserNopagination = async (req, res) => {
+
+    try {
+        await useResponsitorie.getAllUserNoPagination(req, res);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'LẤY TẤT CẢ USER KHÔNG PHÂN TRANG THẤT BẠI'
         })
     }
 }
@@ -275,6 +288,6 @@ const updateUser = async (req, res) => {
     }
 }
 
-export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle, loginPhoneNumber, getOneUser, updateUser }
+export default { login, register, getAllUser, deleteUser, refreshToken, logout, forget_password, reset_password, loginGoogle, loginPhoneNumber, getOneUser, updateUser, getAllUserNopagination }
 
 

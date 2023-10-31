@@ -15,8 +15,6 @@ const insertProductCategory = async ({ name, products }, res) => {
     // check xem đã tồn tại danh mục sản phẩm chưa => nếu chưa tạo mới
     const isNameCategory = await ProductCategorySchema.findOne({ name: name });
 
-
-
     // nếu tồn tại danh mục sản phẩm => thì update lại danh mục sản phẩm => bằng data req gửi lên
     if (!!isNameCategory) {
       print('Danh mục Sản Phẩm đã tồn tại, Cập nhật danh sách sản phẩm bên trong thành công', outputType.SUCCESS);

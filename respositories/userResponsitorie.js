@@ -391,14 +391,13 @@ const logout = async (req, res) => {
 
 
 // register user
-const register = async ({ username, email, password, phoneNumber, address }) => {
+const register = async ({ username, email, password, phoneNumber, address, admin = false }) => {
     // validation
     try {
 
         let existingUser = await User.findOne({ email }).exec();
         if (existingUser !== null) {
             throw new Exception('User already exists (Email đã tồn tại, nhập email khác !)');
-
 
         }
         else {
@@ -412,7 +411,8 @@ const register = async ({ username, email, password, phoneNumber, address }) => 
                 email,
                 password: hashedPassword,
                 phoneNumber,
-                address
+                address,
+                admin
             })
 
             print('register success, đăng kí thành công', outputType.SUCCESS);
@@ -436,7 +436,7 @@ const register = async ({ username, email, password, phoneNumber, address }) => 
 
 }
 
-// get All user
+// get All user => CÓ PHÂN TRANG
 const getAllUser = async ({ page, size, searchString }) => {
     // aggreate data for all . get data students
     size = Number.parseInt(size);
@@ -468,6 +468,28 @@ const getAllUser = async ({ page, size, searchString }) => {
     ]);
     let count = await User.count();
     return { filterUser, count };
+}
+
+// GET ALL USER NO PAGINATION
+const getAllUserNoPagination = async (req, res) => {
+
+    try {
+        const getAllUserNopagination = await User.find();
+
+        print('LẤY TẤT CẢ USER KHÔNG PHÂN TRANG => THÀNH CÔNG', outputType.SUCCESS);
+
+        res.status(200).json({
+            message: 'LẤY TẤT CẢ USER => NOPAGINATION=> THÀNH CÔNG',
+            data: getAllUserNopagination
+        })
+    } catch (error) {
+
+        print('LẤY TẤT CẢ USER KHÔNG PHÂN TRANG => THẤT BẠI', outputType.ERROR);
+        console.log(error)
+        res.status(500).json({
+            message: 'LẤY TẤT CẢ USER KHÔNG PHÂN TRANG THẤT BẠI'
+        })
+    }
 }
 
 // delete one user
@@ -549,8 +571,6 @@ const resetPassword = async (req, res) => {
     }
 
 }
-
-
 
 
 
@@ -703,4 +723,4 @@ const updateUser = async (req, res) => {
 }
 
 
-export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber, getOneUser, updateUser }
+export default { login, register, getAllUser, deleteUser, refreshTokenlai, logout, forgetPassWord, resetPassword, loginGoogle, loginPhoneNumber, getOneUser, updateUser, getAllUserNoPagination }

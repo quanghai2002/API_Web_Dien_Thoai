@@ -7,8 +7,12 @@ import checkToken, { verifyTokenAndAdmin } from '../authentication/auth.js';
 const router = express.Router();
 
 
-// get all users
+// get all users CÓ PAGINATIONS 
 router.get('/', verifyTokenAndAdmin, userController.getAllUser);
+
+
+// get all users NO Pagination
+router.get('/getallusernopagination', verifyTokenAndAdmin, userController.getAllUserNopagination);
 
 // delete users => admin Authorization
 router.delete('/delete/:id', verifyTokenAndAdmin, userController.deleteUser);
