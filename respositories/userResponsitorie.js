@@ -693,9 +693,8 @@ const updateUser = async (req, res) => {
 
     const { _id, username, img_url, address, phoneNumber, orders, email, admin, password } = req?.body;
 
-    // encode bcrypt password => mã hóa mật khẩu
-    const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-    const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+    // encode bcrypt password => mã hóa mật khẩu => nếu có mật khẩu truyền lên
+    // const saltRounds = bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
 
     try {
         const userUpdate = await User.findById(_id);
@@ -706,12 +705,13 @@ const updateUser = async (req, res) => {
         userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
         userUpdate.email = email ?? userUpdate.email;
         userUpdate.admin = admin ?? userUpdate.admin;
-        userUpdate.password = password ? hashedPassword : userUpdate.password; // nếu có mk truyền lên thì lấy mk đó đã mã hóa => không thì lấy mặc định
+        // userUpdate.password = password ? bcrypt.hash(password.toString(), saltRounds) : userUpdate.password; // nếu có mk truyền lên thì lấy mk đó đã mã hóa => không thì lấy mặc định
         userUpdate.orders = orders ? [...userUpdate?.orders, ...orders] : [...userUpdate?.orders] // nếu có order thì lấy order không thì thôi
 
         await userUpdate.save();
 
         print("Cập nhật User thành công", outputType.SUCCESS)
+        console.log('Cập nhật user thành công:')
         res.status(200).json({
             message: 'Cập nhật user thành công !',
             data: userUpdate
@@ -719,7 +719,7 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         print("Cập nhật User thất bại", outputType.ERROR);
-        console.log({ error });
+        console.log('Cập nhật User thất bại:', error);
         res.status(500).json({
             message: 'Cập nhật Userthất bại ! nhập đúng ID user',
         });

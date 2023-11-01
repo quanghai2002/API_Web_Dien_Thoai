@@ -610,6 +610,7 @@ const filterPhoneKichThuocManHinh = async (req, res) => {
 }
 
 
+// -- lưu hình ảnh và trả về url --
 const saveUrlImagePhone = async (req, res) => {
   // post
   const post = process.env.POST || 8081;

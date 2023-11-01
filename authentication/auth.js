@@ -25,6 +25,7 @@ const checkToken = (req, res, next) => {
         || req?.url?.trim().includes(`/api/phone/sort/price_Asc?`)
         || req?.url?.trim().includes(`/api/phone/getonephone`)
         || req?.url?.trim().includes(`/api/phone/search?name=`)
+        || req?.url?.trim() === `/`
     ) {
         next()
         return;

@@ -57,16 +57,13 @@ app.use('/api/order', order);
 // review
 app.use('/api/review', review);
 
-app.get('/', (req, res) => {
-    res.send('responsr from root route kk');
-});
+
 
 // truy cập link ảnh => sau khi đã lưu
 // Điều này cho phép bạn truy cập các tệp ảnh từ URL có định dạng như sau: http://yourdomain.com/uploads/ten-tep-anh.jpg.
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 
 const post = process.env.POST || 8081;
-
 
 
 
@@ -77,4 +74,16 @@ app.use('/api/payment', paymentVNP);
 app.listen(post, async () => {
     await connect();
     console.log(`listening on port ${post}`);
+});
+
+
+// 
+// app.get('/', (req, res) => {
+//     res.send('responsr from root route kk');
+// });
+
+//  thông báo khi server đang chạy
+app.get('/', (req, res) => {
+    const filePath = path.join(__dirname, 'server_running.html');
+    res.sendFile(filePath);
 });
