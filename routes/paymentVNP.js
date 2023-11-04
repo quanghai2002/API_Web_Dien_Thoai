@@ -14,11 +14,10 @@ const config = {
   vnp_HashSecret: "JRHXRLZMIHHLOJKNMINBEXKWECKIAOBZ",
   vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
   vnp_Api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction",
-  vnp_ReturnUrl: "http://localhost:5173/payment/vnpay_return"
+  vnp_ReturnUrl: `${process.env.REACT_URL}/payment/vnpay_return`
   // vnp_ReturnUrl: "http://localhost:5173/payment"
 
 }
-
 
 
 // tạo thanh toán VNP
