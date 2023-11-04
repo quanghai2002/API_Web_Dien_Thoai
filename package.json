@@ -12,10 +12,9 @@
   "keywords": [
     "nodejs"
   ],
-  "author": "Quang Hai",
+  "author": "QuangHai",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
     "config": "^3.3.9",
     "cookie-parser": "^1.4.6",

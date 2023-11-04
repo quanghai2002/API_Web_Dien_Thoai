@@ -1,9 +1,16 @@
 services:
-  app:
+  backend-nodejs:
     image: node:18-alpine
-    command: sh -c "yarn install && yarn start"
+    command: sh -c "npm install && npm start"
     ports:
-      - 127.0.0.1:3000:3000
+      - 8080:8080
     working_dir: /app
     volumes:
       - ./:/app
+    # environment:
+    #   MYSQL_HOST: mysql
+    #   MYSQL_USER: root
+    #   MYSQL_PASSWORD: secret
+    #   MYSQL_DB: todos
+# docker compose up -d
+

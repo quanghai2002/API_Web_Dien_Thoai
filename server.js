@@ -77,13 +77,13 @@ app.listen(post, async () => {
 });
 
 
-// 
+//
 // app.get('/', (req, res) => {
 //     res.send('responsr from root route kk');
 // });
 
 //  thông báo khi server đang chạy
 app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, 'server_running.html');
-    res.sendFile(filePath);
+    res.sendFile(__dirname + '/server_running.html');
 });
+

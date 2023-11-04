@@ -2,7 +2,6 @@ import { response } from 'express';
 import Exception from '../exceptions/Exception.js';
 import { print, outputType } from '../helpers/print.js';
 import { User } from '../models/index.js';
-import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import randomstring from 'randomstring';
@@ -63,22 +62,27 @@ const sendResetPasswordMail = asyncHandler(async (name, email, token, req, res) 
 
 )
 
-
-
 // user login
-const login = async ({ email, password }, res, req) => {
+const login = async ({ email, password }, res) => {
 
     // check user and email => database => đã tồn tại hay chưa
     // findOne db => User
     let existingUser = await User.findOne({ email: email }).exec();
 
-    if (existingUser) {
+    const isEmailExist = Boolean(existingUser);
+    // -- NẾU TÌM THẤY EMAIL THÌ => BƯỚC TIẾP THEO LÀ KIỂM TRA PASSWORD
+    if (isEmailExist) {
         // nếu tìm thấy email => check password => xem có đúng không
-        // so sánh password
-        let isMatch = await bcrypt.compare(password.toString(), existingUser.password);
+        // const isMatch = bcrypt.compare(password.toString(), existingUser.password);  // đây là nếu như dùng mã hóa mật khẩu
+        //  nhưng nó đang gặp vấn đề khi build docker lên thôi
+
+        // ---- so sánh password ----
+        const isMatch = password.toString() === existingUser.password;
+
         if (isMatch) {
             // nếu đúng password
             print('login successful,đăng nhập thành công', outputType.SUCCESS);
+            console.log('đăng nhập thành công !');
 
             // create JWT => khi login successful => payload token -> not password user
             let { password, ...notShowPassword } = existingUser._doc;
@@ -156,7 +160,8 @@ const login = async ({ email, password }, res, req) => {
 
 // --------------------------------------------------
 
-// LOGIN with =>  GOOGLE
+
+// LOGIN with =>  GOOGLE => đăng nhập với tài khoản google
 const loginGoogle = async (req, res) => {
 
     // id Google account localhost 5173
@@ -203,7 +208,7 @@ const loginGoogle = async (req, res) => {
         })
 
     }
-    // nếu còn hạn thực hiện => bình thường
+    // nếu còn hạn thực hiện => bình thường => Đăng nhập tài khoản google bình thường
     else {
         // verify token google
         const client = new OAuth2Client(idGoogle);
@@ -215,7 +220,7 @@ const loginGoogle = async (req, res) => {
 
 
                 if (email_verified) {
-                    // tìm email đăng nhập
+                    // tìm email đăng nhập trong database => thì trả về thông tin user đó
                     const userGoogle = await User.findOne({ email: email }).exec();
                     if (userGoogle) {
                         // ACCESS TOKEN
@@ -240,8 +245,6 @@ const loginGoogle = async (req, res) => {
                         // refreshToken => refreshTokenMoi
                         refreshTokenMoi.push(refreshToken);
 
-
-
                         // res => return Fontend
                         print('Đăng nhập GOOGLE ACCOUNT thành công', outputType.SUCCESS);
                         res.status(200).json({
@@ -264,9 +267,8 @@ const loginGoogle = async (req, res) => {
                     else {
                         // không tìm thấy email => trong db => lưu mới vào database
                         // encode bcrypt password
-                        const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-                        const hashedPassword = await bcrypt.hash(email.toString(), saltRounds);
-                        let password = hashedPassword;
+
+                        let password = email.toString();
 
                         let newUser = new User({
                             username: name,
@@ -359,6 +361,7 @@ const loginPhoneNumber = async (req, res) => {
     refreshTokenMoi.push(refreshToken);
 
     print('Đăng nhập PHONE NUMBER thành công', outputType.SUCCESS);
+    console.log('đăng nhập số điện thoại thành công.');
     res.status(200).json({
         message: 'Login Phone Number=> đăng nhập số điện thoại thành công',
         token,
@@ -370,7 +373,6 @@ const loginPhoneNumber = async (req, res) => {
 
     })
 }
-
 
 // --------------------------------------------------
 /// user logout => clear refresh token
@@ -390,50 +392,50 @@ const logout = async (req, res) => {
 }
 
 
-// register user
-const register = async ({ username, email, password, phoneNumber, address, admin = false }) => {
-    // validation
-    try {
 
+// register user => đăng kí tài khoản
+const register = async ({ username, email, password, phoneNumber, address, admin = false }) => {
+
+    // validation => 
+    try {
         let existingUser = await User.findOne({ email }).exec();
+
+        // nếu không tìm thấy email đã đăng kí mới cho đăng kí
         if (existingUser !== null) {
             throw new Exception('User already exists (Email đã tồn tại, nhập email khác !)');
-
         }
         else {
             // encode bcrypt password => mã hóa mật khẩu
-            const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-            const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+            // const saltRounds = bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+            // const hashedPassword = bcrypt.hash(password.toString(), saltRounds);
 
+            // --- THÔI KHÔNG CẦN MÃ HOASA MẬT KHẨU NỮA --
             // insert to database
+
             const newUser = await User.create({
                 username,
                 email,
-                password: hashedPassword,
+                password: password,
                 phoneNumber,
                 address,
                 admin
             })
 
-            print('register success, đăng kí thành công', outputType.SUCCESS);
+            print('register success, đăng kí tài khoản thành công', outputType.SUCCESS);
             // message client
             return {
                 ...newUser._doc,
-                password: "Not show",
+                // password: "Not show",
             }
 
         }
 
     } catch (error) {
         // check model validations
-
         print(error, outputType.ERROR);
         throw new Exception('cannot register user,đăng kí thât bại !');
 
-
     }
-
-
 }
 
 // get All user => CÓ PHÂN TRANG
@@ -538,6 +540,7 @@ const forgetPassWord = async (req, res) => {
 
 }
 
+
 // resetPassword
 const resetPassword = async (req, res) => {
 
@@ -545,15 +548,15 @@ const resetPassword = async (req, res) => {
 
     const tokenData = await User.findOne({ token: token });
     if (tokenData) {
-        const password = req.body?.password;
+        const password = req.body?.password.toString();
 
         // encode bcrypt password
-        const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
-        const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+        // const saltRounds = await bcrypt.genSaltSync(Number.parseFloat(process.env.SALT_ROUNDS));
+        // const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
 
         let dataReset = User.findByIdAndUpdate({ _id: tokenData._id }, {
             $set: {
-                password: hashedPassword,
+                password: password,
                 token: ''
             }
         },
@@ -705,7 +708,7 @@ const updateUser = async (req, res) => {
         userUpdate.phoneNumber = phoneNumber ?? userUpdate.phoneNumber;
         userUpdate.email = email ?? userUpdate.email;
         userUpdate.admin = admin ?? userUpdate.admin;
-        // userUpdate.password = password ? bcrypt.hash(password.toString(), saltRounds) : userUpdate.password; // nếu có mk truyền lên thì lấy mk đó đã mã hóa => không thì lấy mặc định
+        userUpdate.password = password ? password.toString() : userUpdate.password; // nếu có mk truyền lên thì lấy mk đó  => không thì lấy mặc định
         userUpdate.orders = orders ? [...userUpdate?.orders, ...orders] : [...userUpdate?.orders] // nếu có order thì lấy order không thì thôi
 
         await userUpdate.save();

@@ -24,13 +24,12 @@ const login = async (req, res) => {
 
     const { email, password } = req.body
 
-
     try {
         //call repository
-        await useResponsitorie.login({ email, password }, res, req)
+        await useResponsitorie.login({ email, password }, res)
 
     } catch (error) {
-        console.log(error)
+        console.log('đăng nhập thất bại:', error);
         res.status(404).json({
             message: 'Login user failed, login thất bại, thử lại mật khẩu email !'
         })
@@ -46,7 +45,6 @@ const loginGoogle = async (req, res) => {
     try {
         //call repository
         await useResponsitorie.loginGoogle(req, res)
-
 
     } catch (error) {
         console.log(error)
@@ -91,7 +89,7 @@ const logout = async (req, res) => {
 }
 
 
-// register user
+// register user => đăng kí tài khoản
 const register = async (req, res) => {
 
     const { username, email, password, phoneNumber, address, admin } = req.body;
@@ -101,7 +99,7 @@ const register = async (req, res) => {
         let user = await useResponsitorie.register({ username, email, password, phoneNumber, address, admin });
 
         res.status(200).json({
-            message: 'Register user successfully, Đăng kí thành công !',
+            message: 'Register user successfully, Đăng kí tài khoản thành công !',
             data: user
         })
 
