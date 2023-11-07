@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import isEmail from "validator/lib/isemail.js";
+// import isEmail from "validator/lib/isemail.js";
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -18,12 +18,12 @@ const User = mongoose.model('User',
             required: true,
             unique: true,
             index: true,
-            validate: {
-                validator: (value) => {
-                    return isEmail
-                },
-                messages: "email is correct format"
-            },
+            // validate: {
+            //     validator: (value) => {
+            //         return isEmail
+            //     },
+            //     messages: "email is correct format"
+            // },
         },
 
         phoneNumber: {
