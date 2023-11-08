@@ -13,6 +13,11 @@ import path from 'path';
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
 
+// sử dụng https 
+import fs from 'fs'; // Để đọc chứng chỉ SSL và khóa riêng tư
+import https from 'https'; // Để tạo máy chủ HTTPS
+
+
 //
 dotenv.config();
 const app = express();
@@ -36,6 +41,45 @@ app.all('/', function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next()
 });
+
+
+const post = process.env.POST || 8081;
+
+
+// app.listen(post, async () => {
+//     await connect();
+//     console.log(`listening on port ${post}`);
+// });
+
+
+// test nhung khong chay lay chung chi ssl cho nguyenquanghai.online
+// app.get('/.well-known/pki-validation/496E911C4BCB0950C278549D8AF511A3.txt', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'cetificates', '496E911C4BCB0950C278549D8AF511A3.txt'));
+//     console.log('lay chi chi ssl');
+// });
+
+
+
+// LAY HTTPS CHO HOST  => lấy chứng chỉ ssl 14.225.206.175
+
+const key = fs.readFileSync(path.join(__dirname, 'cetificates', 'private.key'));
+const cert = fs.readFileSync(path.join(__dirname, 'cetificates', 'certificate.crt'));
+
+
+// OPTION HTTPS => đang test sử dụng https 
+const optionHttps = {
+    key,
+    cert
+}
+
+
+const sslServer = https.createServer(optionHttps, app);
+
+sslServer.listen(post, async () => {
+    await connect();
+    console.log(`listening on port ${post}`);
+})
+
 
 // routes
 // user
@@ -63,7 +107,6 @@ app.use('/api/review', review);
 // Điều này cho phép bạn truy cập các tệp ảnh từ URL có định dạng như sau: http://yourdomain.com/uploads/ten-tep-anh.jpg.
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 
-const post = process.env.POST || 8081;
 
 
 
@@ -71,10 +114,10 @@ const post = process.env.POST || 8081;
 app.use('/api/payment', paymentVNP);
 
 //
-app.listen(post, async () => {
-    await connect();
-    console.log(`listening on port ${post}`);
-});
+// app.listen(post, async () => {
+//     await connect();
+//     console.log(`listening on port ${post}`);
+// });
 
 
 //
