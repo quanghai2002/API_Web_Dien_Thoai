@@ -14,12 +14,8 @@ const config = {
   vnp_HashSecret: "JRHXRLZMIHHLOJKNMINBEXKWECKIAOBZ",
   vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
   vnp_Api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction",
-  vnp_ReturnUrl: `${process.env.REACT_URL}/payment/vnpay_return`
-  // vnp_ReturnUrl: "http://localhost:5173/payment"
-
+  vnp_ReturnUrl: 'https://nguyenquanghai.online/payment/vnpay_return' // phải thay bằng host website của mình của mình thật. không lấy được  process.env.REACT_URL
 }
-
-
 
 // tạo thanh toán VNP
 
@@ -109,12 +105,12 @@ router.post('/create_payment_url', function (req, res, next) {
   vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
 
-  // console.log('data', {
+  // console.log('data thanh toán VNP', {
   //   message: 'đang chuyển đến trang thanh toán',
   //   data: vnp_Params,
   //   urlRedirect: vnpUrl
   // })
-  // //
+  //
   res.status(200).json({
     message: 'đang chuyển đến trang thanh toán',
     data: vnp_Params,
@@ -122,7 +118,7 @@ router.post('/create_payment_url', function (req, res, next) {
 
   })
 
-  // res.redirect(vnpUrl)
+
 });
 
 
