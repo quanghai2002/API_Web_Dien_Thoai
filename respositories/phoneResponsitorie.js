@@ -281,7 +281,7 @@ const insertPhone = async ({ name, description, price, dung_luong_pin, mau_sac, 
 
 
 // update  1 phone => CẬP NHẬT 1 SẢN PHẨM
-const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders }, res) => {
+const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders, quantitySold }, res) => {
   try {
     const phone = await Phone.findById(_id);
 
@@ -304,6 +304,7 @@ const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_
     phone.brand = brand ?? phone.brand;
     phone.reviews = reviews ?? phone.reviews;
     phone.orders = orders ?? phone.orders;
+    phone.quantitySold = phone.quantitySold + quantitySold;  // cộng thêm số lượng sản phẩm đã bán khi thanh toán
     await phone.save();
 
     print('Cập nhật sản phẩm thành công', outputType.SUCCESS);
@@ -336,6 +337,7 @@ const updatePhoneMany = async (req, res) => {
     for (const update of phoneUpdates) {
       const productId = update?._id;
       const newStockQuantity = update?.stock_quantity;
+      const newQuantitySold = update?.quantitySold;
 
       // Tạo điều kiện cập nhật cho sản phẩm cụ thể
       const updateCondition = { _id: productId };
@@ -344,6 +346,9 @@ const updatePhoneMany = async (req, res) => {
       const updateFields = {
         $set: {
           stock_quantity: newStockQuantity,
+        },
+        $inc: {
+          quantitySold: newQuantitySold, // newQuantitySold là giá trị mới bạn muốn cộng thêm vào quantitySold
         },
       };
       // Sử dụng updateOne để cập nhật sản phẩm cụ thể

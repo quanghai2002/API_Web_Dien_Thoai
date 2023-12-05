@@ -206,11 +206,11 @@ const getmanyphone = async (req, res) => {
 // update phone => theo id
 const updatePhone = async (req, res) => {
 
-  const { _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders } = req.body;
+  const { _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders, quantitySold } = req.body;
 
   try {
 
-    await phoneResponsitorie.updatePhone({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders }, res);
+    await phoneResponsitorie.updatePhone({ _id, name, description, price, dung_luong_pin, mau_sac, bo_nho, kich_thuoc_man_hinh, camera, CPU, RAM, ROM, he_dieu_hanh, stock_quantity, image_urls, promotion, category, brand, reviews, orders, quantitySold }, res);
 
   } catch (error) {
     res.status(500).json({
@@ -219,6 +219,7 @@ const updatePhone = async (req, res) => {
   }
 
 }
+
 
 // update manyPhone => cập nhật nhiều sản phẩm 1 lúc
 const updatePhoneMany = async (req, res) => {

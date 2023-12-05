@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 
 // sử dụng https 
 import fs from 'fs'; // Để đọc chứng chỉ SSL và khóa riêng tư
-import https from 'https'; // Để tạo máy chủ HTTPS
+// import https from 'https'; // Để tạo máy chủ HTTPS
 
 
 //
@@ -62,23 +62,23 @@ const post = process.env.POST || 8081;
 
 // LAY HTTPS CHO HOST  => lấy chứng chỉ ssl 14.225.206.175
 
-const key = fs.readFileSync(path.join(__dirname, 'cetificates', 'private.key'));
-const cert = fs.readFileSync(path.join(__dirname, 'cetificates', 'certificate.crt'));
+// const key = fs.readFileSync(path.join(__dirname, 'cetificates', 'private.key'));
+// const cert = fs.readFileSync(path.join(__dirname, 'cetificates', 'certificate.crt'));
 
 
 // OPTION HTTPS => đang test sử dụng https 
-const optionHttps = {
-    key,
-    cert
-}
+// const optionHttps = {
+//     key,
+//     cert
+// }
 
 
-const sslServer = https.createServer(optionHttps, app);
+// const sslServer = https.createServer(optionHttps, app);
 
-sslServer.listen(post, async () => {
-    await connect();
-    console.log(`listening on port ${post}`);
-})
+// sslServer.listen(post, async () => {
+//     await connect();
+//     console.log(`listening on port ${post}`);
+// })
 
 
 // routes
@@ -114,10 +114,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/payment', paymentVNP);
 
 //
-// app.listen(post, async () => {
-//     await connect();
-//     console.log(`listening on port ${post}`);
-// });
+app.listen(post, async () => {
+    await connect();
+    console.log(`listening on port ${post}`);
+});
 
 
 //

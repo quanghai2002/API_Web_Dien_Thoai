@@ -14,7 +14,8 @@ const config = {
   vnp_HashSecret: "JRHXRLZMIHHLOJKNMINBEXKWECKIAOBZ",
   vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
   vnp_Api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction",
-  vnp_ReturnUrl: 'https://nguyenquanghai.online/payment/vnpay_return' // phải thay bằng host website của mình của mình thật. không lấy được  process.env.REACT_URL
+  // vnp_ReturnUrl: 'https://nguyenquanghai.online/payment/vnpay_return' // phải thay bằng host website của mình của mình thật. không lấy được  process.env.REACT_URL,
+  vnp_ReturnUrl: 'http://localhost:5173/payment/vnpay_return'
 }
 
 // tạo thanh toán VNP

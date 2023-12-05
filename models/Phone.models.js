@@ -60,6 +60,11 @@ const Phone = mongoose.model('Product',
 
     orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
 
+    quantitySold: {
+      type: Number,
+      default: 0
+    },
+
     createdAt: {
       type: Date,
       default: Date.now
