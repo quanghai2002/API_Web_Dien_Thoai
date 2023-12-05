@@ -304,7 +304,7 @@ const updatePhone = async ({ _id, name, description, price, dung_luong_pin, mau_
     phone.brand = brand ?? phone.brand;
     phone.reviews = reviews ?? phone.reviews;
     phone.orders = orders ?? phone.orders;
-    phone.quantitySold = phone.quantitySold + quantitySold;  // cộng thêm số lượng sản phẩm đã bán khi thanh toán
+    phone.quantitySold = quantitySold ? phone.quantitySold + quantitySold : phone.quantitySold;  // cộng thêm số lượng sản phẩm đã bán khi thanh toán
     await phone.save();
 
     print('Cập nhật sản phẩm thành công', outputType.SUCCESS);
